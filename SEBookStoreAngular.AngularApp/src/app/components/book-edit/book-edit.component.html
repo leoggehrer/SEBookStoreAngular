@@ -1,0 +1,26 @@
+<div *ngIf="book" class="card mt-4">
+    <div class="card-header">Buch bearbeiten</div>
+    <div class="card-body">
+      <form (ngSubmit)="submitForm()" #editForm="ngForm">
+        <div class="mb-3">
+          <label class="form-label">Titel</label>
+          <input class="form-control" [(ngModel)]="book.title" name="title" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Autor</label>
+          <input class="form-control" [(ngModel)]="book.author" name="author" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Erscheinungsjahr</label>
+          <input class="form-control" type="number" [(ngModel)]="book.yearOfRelease" name="year" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Preis</label>
+          <input class="form-control" type="number" step="0.01" [(ngModel)]="book.price" name="price" required />
+        </div>
+        <button class="btn btn-success" type="submit">Speichern</button>
+        <button class="btn btn-secondary ms-2" type="button" (click)="cancelEdit()">Abbrechen</button>
+      </form>
+    </div>
+  </div>
+  

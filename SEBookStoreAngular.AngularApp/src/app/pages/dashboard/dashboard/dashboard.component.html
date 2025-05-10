@@ -1,0 +1,12 @@
+﻿<div class="container mt-5">
+  <h4>Willkommen im Dashboard!</h4>
+
+   <a routerLink="/books" class="btn btn-primary mt-2">Zur Bücherliste</a>
+   
+  <ng-component *ngIf="requireLogin">
+    <div class="alert alert-success">
+      <p>Nur eingeloggte Nutzer sehen diese Seite.</p>
+      <button class="btn btn-danger mt-2" (click)="logout()">Logout</button>
+    </div>
+  </ng-component>
+</div>
