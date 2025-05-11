@@ -22,6 +22,7 @@
       "@environment/*": [ "src/environments/*" ],
       "@app/*": [ "src/app/*" ],
       "@app-pages/*": [ "src/app/pages/*" ],
+      "@app-shared/*": [ "src/app/shared/*" ],
       "@app-components/*": [ "src/app/components/*" ],
       "@app-enums/*": [ "src/app/enums/*" ],
       "@app-models/*": [ "src/app/models/*" ],

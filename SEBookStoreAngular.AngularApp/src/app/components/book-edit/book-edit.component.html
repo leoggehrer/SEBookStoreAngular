@@ -1,14 +1,26 @@
 <div *ngIf="book" class="card mt-4">
-    <div class="card-header">Buch bearbeiten</div>
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3>Buch</h3>
+    <button type="button" 
+        class="btn btn-sm btn-danger" 
+        aria-label="Schließen" 
+        (click)="dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
     <div class="card-body">
       <form (ngSubmit)="submitForm()" #editForm="ngForm">
+        <div class="mb-3">
+          <label class="form-label">Autor</label>
+          <input class="form-control" [(ngModel)]="book.author" name="author" required />
+        </div>
         <div class="mb-3">
           <label class="form-label">Titel</label>
           <input class="form-control" [(ngModel)]="book.title" name="title" required />
         </div>
         <div class="mb-3">
-          <label class="form-label">Autor</label>
-          <input class="form-control" [(ngModel)]="book.author" name="author" required />
+          <label class="form-label">ISBN</label>
+          <input class="form-control" [(ngModel)]="book.isbnNumber" name="title" required />
         </div>
         <div class="mb-3">
           <label class="form-label">Erscheinungsjahr</label>
@@ -19,7 +31,7 @@
           <input class="form-control" type="number" step="0.01" [(ngModel)]="book.price" name="price" required />
         </div>
         <button class="btn btn-success" type="submit">Speichern</button>
-        <button class="btn btn-secondary ms-2" type="button" (click)="cancelEdit()">Abbrechen</button>
+        <button class="btn btn-secondary ms-2" type="button" (click)="cancelForm()">Abbrechen</button>
       </form>
     </div>
   </div>

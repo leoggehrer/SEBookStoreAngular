@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { IBook } from '@app-models/entities/i-book';
-import { BookService } from '@app-services/http/entities/book-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { IBook } from '@app-models/entities/i-book';
+import { BookService } from '@app-services/http/entities/book-service';
 import { IQueryParams } from '@app/models/base/i-query-params';
+import { BookEditComponent } from '@app/components/book-edit/book-edit.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MessageBoxService } from '@app/services/message-box-service.service';
 
 @Component({
   selector: 'app-book-list',
@@ -13,11 +16,11 @@ import { IQueryParams } from '@app/models/base/i-query-params';
 })
 export class BookListComponent implements OnInit {
   private _searchTerm: string = '';
-  private _queryParams: IQueryParams = 
-  { 
-    filter: "Title.ToLower().Contains(@0) or Author.ToLower().Contains(@0)", 
-    values: [] 
-  };
+  private _queryParams: IQueryParams =
+    {
+      filter: "Title.ToLower().Contains(@0) or Author.ToLower().Contains(@0)",
+      values: []
+    };
   public books: IBook[] = [];
   public editingBook: any = null;
   public editingIndex: number | null = null;
@@ -25,6 +28,7 @@ export class BookListComponent implements OnInit {
   public get searchTerm(): string {
     return this._searchTerm;
   }
+
   public set searchTerm(value: string) {
     this._searchTerm = value;
 
@@ -37,7 +41,11 @@ export class BookListComponent implements OnInit {
     this.reloadData();
   }
 
-  constructor(private bookService: BookService) {
+  constructor(
+    private modal: NgbModal,
+    private bookService: BookService,
+    private messageBoxService: MessageBoxService) {
+    this._queryParams.values = [];
 
   }
 
@@ -45,12 +53,12 @@ export class BookListComponent implements OnInit {
     this.reloadData();
   }
 
-  private reloadData() {
+  public reloadData() {
     if (this._queryParams.values.length === 0) {
       this.bookService
         .getAll()
         .subscribe(data => {
-          this.books = data;
+          this.books = this.sortData(data);
         });
     }
     else {
@@ -62,35 +70,94 @@ export class BookListComponent implements OnInit {
     this.bookService
       .query(queryParams)
       .subscribe(data => {
-        this.books = data;
+        this.books = this.sortData(data);
       });
   }
 
-  public editBook(index: number) {
-    this.editingIndex = this.books.indexOf(this.books[index]);
-    this.editingBook = { ...this.books[this.editingIndex] };
+  private sortData(books: IBook[]) {
+    return books.sort((a, b) => {
+      const authorCompare = a.author.localeCompare(b.author);
+      return authorCompare !== 0 ? authorCompare
+        : a.title.localeCompare(b.title);
+    });
   }
 
-  public saveBook(updatedBook: any) {
-    if (this.editingIndex !== null) {
-      this.books[this.editingIndex] = updatedBook;
-      this.editingBook = null;
-      this.editingIndex = null;
-      this.filterBooks(this.searchTerm); // Re-filter the books after editing
-    }
+  public addItem() {
+    const modalRef = this.modal.open(BookEditComponent, {
+      size: 'lg',
+      centered: true
+    });
+    const comp = modalRef.componentInstance as BookEditComponent;
+    // Input-Daten an die Modal-Komponente übergeben
+    comp.book = { id: 0, title: '', author: '', description: '', isbnNumber: '', price: 0, yearOfRelease: 0, };
+
+    // Ergebnis behandeln
+    comp.save.subscribe((book: IBook) => {
+      this.bookService
+        .create(book)
+        .subscribe({
+          next: item => {
+            comp.close();
+            this.reloadData();
+          },
+          error: err => {
+            console.error('Error creating book:', err);
+            this.messageBoxService.show(
+              'Erstellung fehlgeschalgen:\n' + err.error,
+              'Fehler beim Erstellen',
+              'OK'
+            );
+          }
+        });
+    });
   }
 
-  public cancelEdit() {
-    this.editingBook = null;
-    this.editingIndex = null;
+  public editItem(book: IBook) {
+    const modalRef = this.modal.open(BookEditComponent, {
+      size: 'lg',
+      centered: true
+    });
+    const comp = modalRef.componentInstance as BookEditComponent;
+    // Input-Daten an die Modal-Komponente übergeben
+    comp.book = book;
+
+    // Ergebnis behandeln
+    comp.save.subscribe((book: IBook) => {
+      this.bookService
+        .update(book)
+        .subscribe({
+          next: item => {
+            comp.close();
+            this.reloadData();
+          },
+          error: err => {
+            console.error('Error creating book:', err);
+            this.messageBoxService.show(
+              'Speichern fehlgeschalgen:\n' + err.error,
+              'Fehler beim Speichern',
+              'OK'
+            );
+          }
+        });
+    });
   }
 
-  private filterBooks(term: string) {
-    const lower = term.toLowerCase();
-
-    return this.books.filter(book =>
-      book.title.toLowerCase().includes(term) ||
-      book.author.toLowerCase().includes(term)
+  public async deleteItem(book: IBook) {
+    const confirmed = await this.messageBoxService.confirm(
+      `Möchten Sie das Buch '${book.title}' wirklich löschen?`,
+      'Löschen bestätigen'
     );
+    if (confirmed) {
+      this.bookService
+        .delete(book)
+        .subscribe({
+          next: item => {
+            this.reloadData();
+          },
+          error: err => {
+            console.error('Error creating book:', err);
+          }
+        });
+    }
   }
 }

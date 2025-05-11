@@ -6,7 +6,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/auth/login/login.component';
-import { DashboardComponent } from './pages/dashboard/dashboard/dashboard.component';
+import { DashboardComponent } from './pages/dashboard/dashboard/dashboard.component';;
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard/dashboard.compon
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    NgbModule
   ],
   providers: [
     provideHttpClient(),

@@ -65,7 +65,7 @@ import {
   publishBehavior,
   publishLast,
   publishReplay,
-  race,
+  race2 as race,
   raceWith,
   reduce,
   refCount,
@@ -109,10 +109,10 @@ import {
   windowToggle,
   windowWhen,
   withLatestFrom,
-  zip,
+  zip2 as zip,
   zipAll,
   zipWith
-} from "./chunk-EWHU56JM.js";
+} from "./chunk-U5YOOJV4.js";
 import "./chunk-EIB7IA3J.js";
 export {
   audit,

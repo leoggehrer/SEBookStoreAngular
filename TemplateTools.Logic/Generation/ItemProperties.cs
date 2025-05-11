@@ -1,6 +1,7 @@
 ﻿//@CodeCopy
 
 using System.Reflection;
+using System.Text;
 
 namespace TemplateTools.Logic.Generation
 {
@@ -72,7 +73,29 @@ namespace TemplateTools.Logic.Generation
         /// </summary>
         /// <param name="type">The property info object.</param>
         /// <returns>The typescript property name.</returns>
-        public static string CreateTSPropertyName(PropertyInfo propertyInfo) => $"{Char.ToLower(propertyInfo.Name[0])}{propertyInfo.Name[1..]}";
+        public static string CreateTSPropertyName(PropertyInfo propertyInfo)
+        {
+            var sb = new StringBuilder();
+            var name = propertyInfo.Name;
+
+            for (int i = 0; i < name.Length; i++)
+            {
+                if (i == 0)
+                {
+                    sb.Append(char.ToLower(name[i]));
+                }
+                else if ((i + 1) < name.Length
+                         && char.IsUpper(name[i]) && char.IsUpper(name[i + 1]))
+                {
+                    sb.Append(char.ToLower(name[i]));
+                }
+                else
+                {
+                    sb.Append(name[i]);
+                }
+            }
+            return sb.ToString();
+        }
         /// <summary>
         /// Creates the contract name for a given type.
         /// </summary>

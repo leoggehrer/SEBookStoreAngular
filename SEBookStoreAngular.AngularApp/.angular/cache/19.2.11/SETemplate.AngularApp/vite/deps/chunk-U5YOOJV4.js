@@ -3400,6 +3400,14 @@ function publishReplay(bufferSize, windowTime2, selectorOrScheduler, timestampPr
 }
 
 // node_modules/rxjs/dist/esm5/internal/observable/race.js
+function race() {
+  var sources = [];
+  for (var _i = 0; _i < arguments.length; _i++) {
+    sources[_i] = arguments[_i];
+  }
+  sources = argsOrArgArray(sources);
+  return sources.length === 1 ? innerFrom(sources[0]) : new Observable(raceInit(sources));
+}
 function raceInit(sources) {
   return function(subscriber) {
     var subscriptions = [];
@@ -3432,7 +3440,7 @@ function raceWith() {
 }
 
 // node_modules/rxjs/dist/esm5/internal/operators/race.js
-function race() {
+function race2() {
   var args = [];
   for (var _i = 0; _i < arguments.length; _i++) {
     args[_i] = arguments[_i];
@@ -4600,6 +4608,9 @@ export {
   AsyncScheduler,
   EMPTY,
   popResultSelector,
+  popScheduler,
+  popNumber,
+  isArrayLike,
   innerFrom,
   observeOn,
   subscribeOn,
@@ -4617,7 +4628,10 @@ export {
   mergeAll,
   concatAll,
   concat2 as concat,
+  timer,
   filter,
+  race,
+  zip,
   audit,
   auditTime,
   buffer,
@@ -4718,9 +4732,9 @@ export {
   windowWhen,
   withLatestFrom,
   zipAll,
-  zip2 as zip,
+  zip2,
   zipWith,
   partition,
-  race
+  race2
 };
-//# sourceMappingURL=chunk-EWHU56JM.js.map
+//# sourceMappingURL=chunk-U5YOOJV4.js.map

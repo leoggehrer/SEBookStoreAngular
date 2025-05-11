@@ -1,39 +1,52 @@
 <div class="container mt-4">
     <h2 class="mb-4">Bücherliste</h2>
 
-    <input type="text" class="form-control mb-3" [(ngModel)]="searchTerm"
-        placeholder="🔍 Suche nach Titel oder Autor" />
+    <div class="d-flex mb-3">
+        <button class="btn btn-primary me-2" 
+            (click)="addItem()">
+            <i class="bi bi-plus"></i>
+        </button>
+        <input
+            type="text"
+            class="form-control me-2"
+            [(ngModel)]="searchTerm"
+            placeholder="🔍 Suche nach Titel oder Autor"
+        />
+        <button class="btn btn-success me-2"
+            (click)="reloadData()">
+            <i class="bi bi-arrow-clockwise"></i>
+        </button>
+    </div>
 
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
-                <th>Titel</th>
                 <th>Autor</th>
+                <th>Titel</th>
+                <th>ISBN</th>
                 <th>Erscheinungsjahr</th>
                 <th>Preis</th>
                 <th>Aktion</th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let book of books; let i = index">
-                <td><strong>{{ book.title }}</strong></td>
-                <td>{{ book.author }}</td>
+            <tr *ngFor="let book of books">
+                <td><strong>{{ book.author }}</strong></td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.isbnNumber }}</td>
                 <td>{{ book.yearOfRelease }}</td>
                 <td>{{ book.price | currency : 'EUR':'symbol':'1.2-2' }}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" 
-                        (click)="editBook(i)">
+                    <button class="btn btn-sm btn-outline-secondary me-2" 
+                        (click)="editItem(book)">
                         <i class="bi bi-pencil"></i>                      
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger"
+                        (click)="deleteItem(book)">
+                        <i class="bi bi-trash"></i>                      
                     </button>
                 </td>
             </tr>
         </tbody>
     </table>
-
-    <!-- Edit-Komponente einbinden -->
-    <!-- <app-book-edit *ngIf="editingBook" 
-        [book]="editingBook" 
-        (save)="saveBook($event)"
-        (cancel)="cancelEdit()">
-    </app-book-edit> -->
 </div>

@@ -1,9 +1,9 @@
-﻿import { HttpClient } from '@angular/common/http';
+﻿import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { IdType, IKey } from '@app-models/i-key';
 import { arrayToDate, stringToDate } from '@app/converter/date-converter';
 import { IQueryParams } from '@app/models/base/i-query-params';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 /**
  * Abstract base service for API operations.
@@ -52,11 +52,16 @@ export abstract class ApiBaseService<T extends IKey> {
    * @returns An Observable of the entity.
    */
   public getById(id: IdType): Observable<T> {
-    return this.http.get<T>(`${this.ENDPOINT_URL}/${id}`).pipe(
-      map((response: T) => {
-        stringToDate(response);
-        return response;
-      })
+    return this.http.get<T>(`${this.ENDPOINT_URL}/${id}`)
+      .pipe(
+        map((response: T) => {
+          stringToDate(response);
+          return response;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error retrieving entity by ID:', error);
+          throw error;
+        })
     );
   }
 
@@ -66,11 +71,16 @@ export abstract class ApiBaseService<T extends IKey> {
    * @returns An observable that emits an array of results of type `T`.
    */
   public query(queryParams: IQueryParams): Observable<T[]> {
-    return this.http.post<T[]>(`${this.ENDPOINT_URL}/query`, queryParams).pipe(
-      map((response: T[]) => {
-        arrayToDate(response);
-        return response;
-      })
+    return this.http.post<T[]>(`${this.ENDPOINT_URL}/query`, queryParams)
+      .pipe(
+        map((response: T[]) => {
+          arrayToDate(response);
+          return response;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error executing query:', error);
+          throw error;
+        })
     );
   }
 
@@ -80,11 +90,17 @@ export abstract class ApiBaseService<T extends IKey> {
    * @returns An Observable of the created entity.
    */
   public create<T extends IKey>(dataItem: T): Observable<T> {
-    return this.http.post<T>(`${this.ENDPOINT_URL}`, dataItem).pipe(
-      map((response: T) => {
-        stringToDate(response);
-        return response;
-      })
+    return this.http
+      .post<T>(`${this.ENDPOINT_URL}`, dataItem)
+      .pipe(
+        map((response: T) => {
+          stringToDate(response);
+          return response;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error creating entity:', error);
+          throw error;
+        })
     );
   }
 
@@ -100,6 +116,10 @@ export abstract class ApiBaseService<T extends IKey> {
         map((response: T) => {
           stringToDate(response);
           return response;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error updating entity:', error);
+          throw error;
         })
       );
   }
@@ -115,7 +135,14 @@ export abstract class ApiBaseService<T extends IKey> {
       body: dataItem,
     };
 
-    return this.http.delete(`${this.ENDPOINT_URL}/${dataItem.id}`, options);
+    return this.http
+      .delete(`${this.ENDPOINT_URL}/${dataItem.id}`, options)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error deleting entity:', error);
+          throw error;
+        })
+      );
   }
 
   /**
@@ -128,6 +155,13 @@ export abstract class ApiBaseService<T extends IKey> {
       headers: {}
     };
 
-    return this.http.delete(`${this.ENDPOINT_URL}/${id}`, options);
+    return this.http
+      .delete(`${this.ENDPOINT_URL}/${id}`, options)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error deleting entity by ID:', error);
+          throw error;
+        })
+      );
   }
 }
