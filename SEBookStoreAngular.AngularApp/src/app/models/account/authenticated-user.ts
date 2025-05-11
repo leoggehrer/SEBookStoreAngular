@@ -1,4 +1,5 @@
-﻿import { IdType } from '@app-models/i-key';
+﻿//@CodeCopy
+import { IdType } from '@app-models/i-key';
 
 export interface AuthenticatedUser {
   identityId: IdType;

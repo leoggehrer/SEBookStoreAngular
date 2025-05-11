@@ -1,4 +1,5 @@
-﻿import { Injectable } from '@angular/core';
+﻿//@CodeCopy
+import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { environment } from '../../environments/environment';

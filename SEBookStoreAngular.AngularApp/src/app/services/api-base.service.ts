@@ -1,9 +1,10 @@
-﻿import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+﻿//@CodeCopy
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { IdType, IKey } from '@app-models/i-key';
-import { arrayToDate, stringToDate } from '@app/converter/date-converter';
 import { IQueryParams } from '@app/models/base/i-query-params';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { arrayToDate, stringToDate } from '@app/converter/date-converter';
 
 /**
  * Abstract base service for API operations.

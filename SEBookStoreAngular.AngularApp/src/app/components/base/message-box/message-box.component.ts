@@ -1,4 +1,4 @@
-// message-box.component.ts
+//@CodeCopy
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';

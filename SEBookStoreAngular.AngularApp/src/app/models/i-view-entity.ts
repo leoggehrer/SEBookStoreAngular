@@ -1,2 +1,3 @@
-﻿export interface IViewEntity {
+﻿//@CodeCopy
+export interface IViewEntity {
 }
