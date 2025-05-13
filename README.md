@@ -1,157 +1,208 @@
-﻿# SEBookStoreAngular – Vorlage für SE-Architektur-Projekte
+﻿﻿﻿﻿
+# BookStoreAngular
 
 **Inhaltsverzeichnis:**
 
-- [SEBookStoreAngular – Vorlage für SE-Architektur-Projekte](#SEBookStoreAngular--vorlage-für-se-architektur-projekte)
+- [BookStore](#bookstore)
+  - [Lehrziele](#lehrziele)
   - [Einleitung](#einleitung)
-  - [Projektübersicht](#projektübersicht)
-  - [Voraussetzungen](#voraussetzungen)
-  - [Arbeitsweise von SEBookStoreAngular](#arbeitsweise-von-SEBookStoreAngular)
-    - [Projekterstellung](#projekterstellung)
-  - [Verwendung der Vorlage SEBookStoreAngular](#verwendung-der-vorlage-SEBookStoreAngular)
-    - [Repository klonen](#repository-klonen)
-    - [Bedienungsanleitung](#bedienungsanleitung)
-      - [Hauptmenü](#hauptmenü)
-        - [Menü-Option: Copier](#menü-option-copier)
-        - [Menü: Preprocessor](#menüpreprocessor)
-        - [Menü: CodeGenerator](#menü-codegenerator)
-        - [Menü: Synchronization](#menü-synchronization)
-        - [Menü: Cleanup](#menü-cleanup)
-  - [Beispiele](#beispiele)
-    - [Beispiel 1: SEBookStore](#beispiel-1-sebookstore)
-  - [Authentifizierung](#authentifizierung)
-    - [Rollenbasiertes Zugriffssytem](#rollenbasiertes-zugriffssytem)
-      - [Funktionsweise](#funktionsweise)
-        - [PasswordHash und PasswordSalt](#passwordhash-und-passwordsalt)
-          - [PasswordHash](#passwordhash)
-          - [PasswordSalt](#passwordsalt)
-        - [TimeOutInMinutes](#timeoutinminutes)
-      - [Anmeldung](#anmeldung)
+  - [Datenmodell und Datenbank](#datenmodell-und-datenbank)
+    - [Definition von ***Book***](#definition-von-book)
+  - [Aufgaben](#aufgaben)
+    - [Geschäftsregeln](#geschäftsregeln)
+    - [Prüfung der ISBN-Nummern](#prüfung-der-isbn-nummern)
+      - [Beispiele](#beispiele)
+  - [Datenimport](#datenimport)
+  - [Umsetzung der Aufgabe mit dem SETemplate](#umsetzung-der-aufgabe-mit-dem-setemplate)
+    - [Schritt 1: Repository klonen](#schritt-1-repository-klonen)
+    - [Schritt 2: `SETemplate` mit der IDE öffnen](#schritt-2-setemplate-mit-der-ide-öffnen)
+    - [Schritt 3: Starten der Anwendung `TemplateTools.ConApp`](#schritt-3-starten-der-anwendung-templatetoolsconapp)
+    - [Schritt 4: `SETemplate` kopieren =\> `SEBookStore`](#schritt-4-setemplate-kopieren--sebookstore)
+    - [Schritt 5: `SEBookStore` mit der IDE öffnen](#schritt-5-sebookstore-mit-der-ide-öffnen)
+    - [Schritt 6: Starten der Anwendung `TemplateTools.ConApp`](#schritt-6-starten-der-anwendung-templatetoolsconapp)
+    - [Schritt 7: `Preprocessor` einstellen](#schritt-7-preprocessor-einstellen)
+    - [Schritt 8: Entity-`Book` erstellen](#schritt-8-entity-book-erstellen)
+    - [Schritt 9: Validierung für das Entity-`Book` erstellen](#schritt-9-validierung-für-das-entity-book-erstellen)
+    - [Schritt 10: Starten der `CodeGenerierung`](#schritt-10-starten-der-codegenerierung)
+  - [Erweiterungen nach der CodeGenerierung](#erweiterungen-nach-der-codegenerierung)
+    - [Erweiterung: Datenimport](#erweiterung-datenimport)
+    - [Erweiterung MVVMApp](#erweiterung-mvvmapp)
+      - [Erweiterung MVVMApp-Listen-Ansicht](#erweiterung-mvvmapp-listen-ansicht)
+      - [Erweiterung MVVMApp-Einzel-Ansicht](#erweiterung-mvvmapp-einzel-ansicht)
+    - [Testen der MVVMApp](#testen-der-mvvmapp)
 
 ---
+
+## Lehrziele
+
+- Umsetzung der SE-Architektur mit dem SE-Template
+- Prüfen von Geschäftsregeln
+- Importieren von csv-Daten
 
 ## Einleitung
 
-Das **SEBookStoreAngular** ist eine wiederverwendbare Projektvorlage, die auf dem Konzept von [SEArchitecture](https://github.com/leoggehrer/SEArchitecture) basiert. Sie dient als technische Grundlage für Anwendungen, die einer strukturierten und wartbaren Software-Architektur folgen sollen und ermöglicht die schnelle und einheitliche Erstellung neuer Projekte.
+Das Projekt ***SEBookStore*** ist eine datenzentrierte Anwendung zur Verwaltung von Büchern. Diese Anwendung wird mit dem [**SE-Template**](https://github.com/leoggehrer/SETemplate) erstellt. Das Template ist eine Vorlage für die Erstellung von .NET-Projekten und enthält bereits alle notwendigen Komponenten, um eine vollständige Anwendung zu erstellen.
 
-**Zielgruppe:** Entwickler: innen, die auf Basis der definierten Architektur schnell Projekte **aufsetzen**, **anpassen** und **erweitern** wollen.
+## Datenmodell und Datenbank
 
----
+Das Datenmodell für ***BookStore*** hat folgenden Aufbau:
 
-## Projektübersicht
-
-|Projekt|Beschreibung|Typ|Abhängigkeit|
-|---|---|---|---|
-|**SEBookStoreAngular.Common** |In diesem Projekt werden alle Hilfsfunktionen, allgemeine Erweiterungen und Schnittstellen zusammengefasst. Diese sind unabhängig vom Problembereich und können auch in andere Domän-Projekte wiederverwendet werden.| Library | keine |
-|**SEBookStoreAngular.Logic**|Dieses Projekt beinhaltet den vollständigen Datenzugriff, die gesamte Geschäftslogik und stellt somit den zentralen Baustein des Systems dar.| Library | SEBookStoreAngular.Common |
-|**SEBookStoreAngular.Logic.UnitTest**|In diesem Projekt befinden sich die **Unit-Tests** für die gesamte Geschäftslogik.| MSTest | SEBookStoreAngular.Logic, SEBookStoreAngular.Common |
-|**SEBookStoreAngular.WebApi**|In diesem Projekt ist die REST-Schnittstelle implementiert. Dieses Modul stellt eine API (Aplication Programming Interface) für den Zugriff auf das System über das Netzwerk zur Verfügung.| Host | SEBookStoreAngular.Logic, SEBookStoreAngular.Common |
-|**SEBookStoreAngular.ConApp**|Dieses Projekt dient als Initial-Anwendung zum Erstellen bzw. Abgleichen der Datenbank, das Anlegen von Konten falls die Authentifizierung aktiv ist und zum Importieren von bestehenden Daten. Nach der Initialisierung wird diese Anwendung kaum verwendet.| Console | SEBookStoreAngular.Logic, SEBookStoreAngular.Common |
-|**SEBookStoreAngular.MVVMApp**|Diese Projekt beinhaltet die Basisfunktionen für eine Wpf-Anwendung (Avalonia) und kann als Vorlage für die Entwicklung einer Wpf-Anwendung mit dem SEBookStoreAngular Framework verwendet werden.|Host| SEBookStoreAngular.Logic, SEBookStoreAngular.Common |
-|**SEBookStoreAngular.XxxYyy**|Es folgen noch weitere Vorlagen von Client-Anwendungen wie Angular, Blazor und mobile Apps. Zum jetzigen Zeitpunkt existiert nur die Wpf-Anwendung (Avalonia). Die Erstellung und Beschreibung weiterer Client-Anwendungen erfolgt zu einem späteren Zeitpunkt.| Host | SEBookStoreAngular.Logic, SETTemplate.Common |
-
----
-
-## Voraussetzungen
-
-- [.NET SDK 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- Visual Studio 2022 (oder JetBrains Rider)
-- Visual Studio Code (mit den entsprechenden Extensions)
-- Git
-
-## Arbeitsweise von SEBookStoreAngular
-
-### Projekterstellung
-
-Die nachfolgenden Abbildung zeigt den schematischen Erstellungs-Prozess für ein Domain-Projekt:  
-  
-![Projekterstellung](img/template_copier.png)  
-  
-Als Ausgangsbasis wird die Vorlage ***SEBookStoreAngular*** verwendet. Diese Vorlage beinhaltet das Hilfsprogramm ***'TemplateTools.ConApp'***. Mit Hilfe dieses Programms kann eine Kopie (Domain-Projekt) in ein Verzeichnis eigener Wahl erstellt werden. Bei der Erstellung des Domain-Projektes, zum Beispiel das Projekt **SEBookStore**, werden die folgenden Aktionen ausgeführt:
-
-- Alle Projektteile aus der Vorlage werden in das Zielverzeichnis kopiert.
-- Die Namen der Projekte und Komponenten werden entsprechend angepasst.
-- Alle Projekte mit dem Präfix **SEBookStoreAngular** werden mit dem domainspezifischen Namen ersetzt.
-- Beim Kopieren der Dateien wird der Label **@CodeCopy** mit dem Label **@CodeCopy** ersetzt (Diese Labels werden für einen späteren Abgleich-Prozess verwendet).
-
-Nach dem der Erstellungsprozess ausgeführt wurde, haben Sie ein weiters Projekt (Solution) erhalten - ein Domain-Projekt.
-
-![Projekterstellung2](img/template_copier2.png)  
-
-> **Hinweis:** Die beiden Projekte **SEBookStoreAngular** und **DomainProjekt** können zu einem späteren Zeitpunkt abgeglichen werden.
-
-## Verwendung der Vorlage SEBookStoreAngular
-
-### Repository klonen
-
-```bash
-git clone https://github.com/leoggehrer/SEBookStoreAngular.git
-cd SEBookStoreAngular
+```txt
++-------+--------+ 
+|                | 
+|      Book      + 
+|                | 
++-------+--------+ 
 ```
 
-### Bedienungsanleitung
+### Definition von ***Book***
 
-Das Programm **Template Tools** bietet verschiedene Funktionen zum Verwalten und Bearbeiten von Software‑Projekten, welche mit dem `SEBookStoreAngular` erstellt wurden. Das `Hauptmenü` zeigt alle verfügbaren Aktionen an, die durch Eingabe einer Ziffer, mehrerer Ziffern, des Buchstabens „a“ (für „all“) oder „x“/„X“ (zum Beenden) ausgewählt werden.
+| Name          | Type   | MaxLength | Nullable |Unique|Db-Field|Access|
+|---------------|--------|-----------|----------|------|--------|------|
+| Id            | int    | --------- | -------- | ---- | Yes    | R    |
+| ISBNNumber    | String | 10        | No       | Yes  | Yes    | RW   |
+| Author        | String | 128       | No       | Yes+ | Yes    | RW   |
+| Title         | String | 256       | No       | Yes+ | Yes    | RW   |
+| Description   | String | 1024      | Yes      | No   | Yes    | RW   |
+| YearOfRelease | int    | --------- | -------- | No   | Yes    | RW   |
+| Price         | double | --------- | -------- | No   | Yes    | RW   |
 
-#### Hauptmenü
++...beide zusammen sind eindeutig
 
-```bash
-==============  
-Template Tools  
-==============  
+## Aufgaben  
 
-Solution path: ...\SEBookStoreAngular
+### Geschäftsregeln  
 
-[ ----] -----------------------------------------------------------------  
-[    1] Path................Change solution path  
-[ ----] -----------------------------------------------------------------  
-[    2] Copier..............Copy this solution to a domain solution  
-[    3] Preprocessor........Setting defines for project options  
-[    4] CodeGenerator.......Generate code for this solution  
-[    5] Synchronization.....Matches a project with the template  
-[    6] Cleanup.............Deletes the temporary directories  
-[-----] -----------------------------------------------------------------  
-[  x|X] Exit................Exits the application  
+Das System muss einige Geschäftsregeln umsetzen. Diese Regeln werden im **Backend** implementiert und müssen mit **UnitTests** überprüft werden.
 
-Choose [n|n,n|a...all|x|X]:  
-```
+> **HINWEIS:** Unter **Geschäftsregeln** (Business-Rules) versteht man **elementare technische Sachverhalte** im Zusammenhang mit Computerprogrammen. Mit *WENN* *DANN* Scenarien werden die einzelnen Regeln beschrieben.  
 
-**Menü‑Optionen im Detail:**
+Für den ***SEBookStore*** sind folgende Regeln definiert:
 
-*Menü-Auswahl:* `Pfad ändern`
+| Rule | Subject | Type   | Operation | Description | Note |
+|------|---------|--------|-----------|-------------|------|
+|**A1**| `Book`  |        |           |             |      |
+|      |         |**WENN**|           | ein `Book` erstellt oder bearbeitet wird, |  |
+|      |         |**DANN**|           | muss die `ISBNNumber` festgelegt sein und gültig sein (die Regeln finden Sie im Abschnitt **Prüfung der ISBN-Nummern**). | |
+|**A2**| `Book`  |        |           |             |      |
+|      |         |**WENN**|           | ein `Book` erstellt oder bearbeitet wird, |  |
+|      |         |**DANN**|           | muss der `Author` festgelegt sein und mindestens 3 Zeichen lang sein. | |
+|**A3**| `Book`  |        |           |             |      |
+|      |         |**WENN**|           | ein `Book` erstellt oder bearbeitet wird, |  |
+|      |         |**DANN**|           | muss der `Title` festgelegt sein und mindestens 5 Zeichen lang sein. | |
+|**A4**| `Book`  |        |           |             |      |
+|      |         |**WENN**|           | ein `Book` erstellt oder bearbeitet wird, |  |
+|      |         |**DANN**|           | muss die `YearOfRelease` festgelegt und im im Bereich von 1900 bis aktuelles Datum + 1 Jahr sein. | |
+|**A5**| `Book`  |        |           |             |      |
+|      |         |**WENN**|           | ein `Book` erstellt oder bearbeitet wird, |  |
+|      |         |**DANN**|           | muss der `Price` festgelegt und im Bereich von 1 EUR bis 10.000 EUR sein. | |
 
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 1       | Path                | Ändert das Verzeichnis (Pfad), in dem das aktuelle Template liegt. |
-|         |                     | *Solution path:* ...\SEBookStoreAngular zeigt den aktuellen Pfad zum Template an. |
+> **Hinweis:** Falls einer der Geschäftsregeln nicht erfüllt ist, muss eine **BusinessException** mit einer entsprechenden Fehlermeldung (in Englisch) geworfen werden.
 
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Aufforderung zur Eingabe des neuen Pfads.  |
-| 2       | Prüfung, ob das Verzeichnis existiert?     |
-| 3       | Wenn ja, dann wird die Änderung übernommen, <br > *sonst* wird die Änderung verworfen. |
-| 4       | Zurück in die Menü-Optionen.               |
+### Prüfung der ISBN-Nummern
+
+Die **Prüfziffer (10. Ziffer)** der ISBN-Nummer wird so berechnet:
+
+1. Multipliziere jede der ersten 9 Ziffern mit ihrer Position (1 bis 9).  
+2. Summiere alle Produkte.  
+3. Teile die Summe ganzzahlig durch 11.  
+4. Der **Rest** ist die Prüfziffer. Falls der Rest 10 ist, ist die Prüfziffer **„X“**.
+
+#### Beispiele
+
+1. **ISBN 3-499-13599-[?]**  
+   `3·1 + 4·2 + 9·3 + 9·4 + 1·5 + 3·6 + 5·7 + 9·8 + 9·9 = 285`  
+   `285 % 11 = 10` ⇒ Prüfziffer: **X**
+
+2. **ISBN 3-446-19313-[?]**  
+   `3·1 + 4·2 + 4·3 + 6·4 + 1·5 + 9·6 + 3·7 + 1·8 + 3·9 = 162`  
+   `162 % 11 = 8` ⇒ Prüfziffer: **8**
+
+3. **ISBN 0-7475-5100-[?]**  
+   `0·1 + 7·2 + 4·3 + 7·4 + 5·5 + 5·6 + 1·7 + 0·8 + 0·9 = 116`  
+   `116 % 11 = 6` ⇒ Prüfziffer: **6**
+
+4. **ISBN 1-57231-422-[?]**  
+   `1·1 + 5·2 + 7·3 + 2·4 + 3·5 + 1·6 + 4·7 + 2·8 + 2·9 = 123`  
+   `123 % 11 = 2` ⇒ Prüfziffer: **2**
+
+> **Hinweis:** Wenn die ISBN-Prüfziffer nicht korrekt ist, **muss eine Ausnahme geworfen werden.**
+
+## Datenimport
+
+Erstellen Sie ein Konsolenprogramm welches die Datenbank erzeugt und die beigelegte csv-Datei in die Datenbank importiert. Falls es beim Import zu Fehlern kommt (z.B. ISBN-Prüfziffer falsch), muss eine entsprechende Fehlermeldung ausgegeben werden.
 
 ---
 
-##### Menü-Option: Copier
+## Umsetzung der Aufgabe mit dem SETemplate
 
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 2       | Copier              | Kopiert die aktuelle Vorlage in ein Domain‑Projekt. |
+Mit dem `SETemplate` können Sie die Aufgabenstellung in wenigen Schritten umsetzen.
 
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt in das Menü `Copier`.           |
+**Umsetzungstabelle:**
+
+| Schritt | Beschreibung                                   |
+|---------|------------------------------------------------|
+| 1       | `SETemplate` klonen                            |
+| 2       | `SETemplate` mit der IDE öffnen                |
+| 3       | Starten der Anwendung `TemplateTools.ConApp`   |
+| 4       | `SETemplate` kopieren => `SEBookStore`         |
+| 5       | `SEBookStore` mit der IDE öffnen               |
+| 6       | Starten der Anwendung `TemplateTools.ConApp`   |
+| 7       | `Preprocessor` einstellen                      |
+| 8       | Entity-`Book` erstellen                        |
+| 9       | Validierung für das Entity-`Book` erstellen    |
+| 10      | Starten der `CodeGenerierung`                  |
+
+### Schritt 1: Repository klonen
+
+```bash
+git clone https://github.com/leoggehrer/SETemplate.git
+cd SETemplate
+```
+
+### Schritt 2: `SETemplate` mit der IDE öffnen
+
+Öffnen Sie das `SETemplate` mit der IDE (Visual Studio 2022, Rider oder Visual Studio Code).
+
+### Schritt 3: Starten der Anwendung `TemplateTools.ConApp`
+
+Nach dem Start von `TemplateTools.ConApp` wird folgendes Menü angezeigt:
+
+```bash
+==============
+Template Tools
+==============
+
+Solution path: ...\SETemplate
+
+[ ----] -----------------------------------------------------------------
+[    1] Path................Change solution path
+[ ----] -----------------------------------------------------------------
+[    2] Copier..............Copy this solution to a domain solution
+[    3] Preprocessor........Setting defines for project options
+[    4] CodeGenerator.......Generate code for this solution
+[    5] Synchronization.....Matches a project with the template
+[    6] Cleanup.............Deletes the temporary directories
+[-----] -----------------------------------------------------------------
+[  x|X] Exit................Exits the application
+
+Choose [n|n,n|a...all|x|X]:
+```
+
+---
+
+### Schritt 4: `SETemplate` kopieren => `SEBookStore`
+
+Wählen Sie die **Menü-Option:** 2 - `Copier` aus. Anschließend wird das folgende Menü angezeigt:
 
 ```bash
 ===============
 Template Copier
 ===============
 
-'SEBookStoreAngular' from:   ...\repos\SEBookStoreAngular
+'SETemplate' from:   ...\SETemplate
   -> copy ->
-'TargetSolution' to: ...\repos\TargetSolution
+'TargetSolution' to: ...\TargetSolution
 
 [  ---] -----------------------------------------------------------------
 [    1] 1...................Change max sub path depth
@@ -163,241 +214,362 @@ Template Copier
 [-----] -----------------------------------------------------------------
 [  x|X] Exit................Exits the application
 
-Choose [n|n,n|a...all|x|X]:  
+Choose [n|n,n|a...all|x|X]:
 ```
 
-*Menü-Auswahl:* `1`
+Wählen Sie die **Menü-Option:** 3 - `Target path` aus und geben Sie den Zielpfad an, in dem das Projekt erstellt werden soll. Zum Beispiel: `C:\Users\...\source\repos`.
 
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 1       | Change depth        | Ändert die Pfad-Tiefe für die Auswahl eines Pfades. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Geben Sie eine Zahl >= 0 ein.              |
-
-*Menü-Auswahl:* `Source path`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 2       | Source path         | Ändert den Pfad der Vorlage. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | In Abhängigkeit der Pfad-Tiefe werden alle Verzeichnisse aufgelistet. |
-| 2       | Wählen Sie einen Pfad mit der angegebenen Nummer aus <br > oder geben Sie den Pfad ein: |
-| 3       | Prüfung, ob das Verzeichnis existiert?     |
-| 4       | Wenn ja, dann wird die Änderung übernommen, <br > *sonst* wird die Änderung verworfen. |
-| 5       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `Target path`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 3       | Target path         | Ändern Sie den Pfad für die Erstellung. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | In Abhängigkeit der Pfad-Tiefe werden alle Verzeichnisse aufgelistet. |
-| 2       | Wählen Sie einen Pfad mit der angegebenen Nummer aus oder geben Sie den Pfad direkt ein. |
-| 3       | Prüfung, ob das Verzeichnis existiert?     |
-| 4       | Wenn ja, dann wird die Änderung übernommen, <br > *sonst* wird die Änderung verworfen. |
-| 5       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `Target name`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 4       | Target name         | Ändern den Namen für das Domain-Projekt. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Geben Sie den gewünschten Namen für das Domain-Projekt ein. |
-
-*Menü-Auswahl:* `Start`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 5       | Start               | Startet der Kopier-Prozess mit den entsprechenden Einstellungen. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Erstellt eine Kopie aus der Vorlage und berücksichtigt den `Target name`. |
-| 2       | Nachdem die `Target-Solution` erstellt wurde, wird der Datei-Explorer geöffnet. <br > **INFO:** Gilt nur für Windows-Betriebssysteme. |
-| 3       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `Exit`
-
-| Auswahl | Funktion            | Beschreibung                |
-|---------|---------------------|-----------------------------|
-| x od. X | Exit                | Beendet die 'Copier-App'.   |
-
-| Ablauf  | Beschreibung                                      |
-|---------|---------------------------------------------------|
-| 1       | Beendet die Anwendung und zeigt das `Hauptmenü` an. |
+Wählen Sie die **Menü-Option:** 4 - `Target name` aus und geben Sie den Namen des Projektes an. Zum Beispiel: `SEBookStore`. Das Ergebnis sollte wie folgt aussehen:
 
 ```bash
-==============  
-Template Tools  
-==============  
+===============
+Template Copier
+===============
 
-Solution path: ...\SEBookStoreAngular
+'SETemplate' from: ...\SETemplate
+  -> copy ->
+'SEBookStore' to:  C:\Users\...\source\repos\SEBookStore
 
-[ ----] -----------------------------------------------------------------  
-[    1] Path................Change solution path  
-[ ----] -----------------------------------------------------------------  
-[    2] Copier..............Copy this solution to a domain solution  
-[    3] Preprocessor........Setting defines for project options  
-[    4] CodeGenerator.......Generate code for this solution  
-[    5] Synchronization.....Matches a project with the template  
-[    6] Cleanup.............Deletes the temporary directories  
-[-----] -----------------------------------------------------------------  
-[  x|X] Exit................Exits the application  
+[  ---] -----------------------------------------------------------------
+[    1] 1...................Change max sub path depth
+[    2] Source path.........Change the source solution path
+[    3] Target path.........Change the target solution path
+[    4] Target name.........Change the target solution name
+[  ---] -----------------------------------------------------------------
+[    5] Start...............Start copy process
+[-----] -----------------------------------------------------------------
+[  x|X] Exit................Exits the application
 
-Choose [n|n,n|a...all|x|X]:  
+Choose [n|n,n|a...all|x|X]:
+```
+
+Wählen Sie die **Menü-Option:** 5 - `Start` aus. Das System kopiert nun die Projektmappe und ersetzt die entsprechenden Projektnamen mit `SEBookStore`. Wenn sie ein Windows-System verwenden, wird automatisch der Datei-Explorer mit dem Pfad 'C:\Users\...\source\repos\SEBookStore' geöffnet.
+
+---
+
+### Schritt 5: `SEBookStore` mit der IDE öffnen
+
+Im nächsten Schritt öffnen Sie nun die Projektmappe `SEBookStore` mit der IDE (Visual Studio, VSCode oder Rider). Wenn alles erfolgreich war, sollte das Ergebnis wie folgt aussehen:
+
+```bash
+-|- SEBookStore
+  |- Diagrams
+  |- SEBookStore.AngularApp
+   |- ...
+  |- SEBookStore.CodeGenApp
+   |- ...
+  |- SEBookStore.Common
+   |- Contracts
+   |- Enums
+   |- Extensions
+   |- Models
+   |- Modules
+   |- ...
+  |- SEBookStore.ConApp
+   |- ...
+  |- SEBookStore.Logic
+   |- Contracts
+   |- Enums
+   |- DataContext
+   |- Entities
+   |- Exceptions
+   |- Models
+   |- Modules
+   |- ...
+  |- SEBookStore.MVVMApp
+   |- Models
+   |- ViewModels
+   |- Views
+   |- ...
+  |- SEBookStore.WebApi
+   |- Contracts
+   |- Controllers
+   |- Models
+   |- ...
+  |- TemplateTools.ConApp
+   |- ...
+  |- TemplateTools.Logic
+   |- ...
+  |- README.md
+  |- SEBookStore.sln
 ```
 
 ---
 
-##### Menü: Preprocessor
+### Schritt 6: Starten der Anwendung `TemplateTools.ConApp`
 
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 3       | Preprocessor        | Legt Compiler‑Defines bzw. Präprozessor‑Anweisungen für das Projekt fest und speichert diese in der Projektkonfigurationsdatei (*.csproj). |
+Nach dem Start von `TemplateTools.ConApp` wird folgendes Menü angezeigt:
 
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Listet alle möglichen 'Defines' auf und zeigt den aktuellen Status (ON oder OFF) an. |
-| 2       | Setzen der entsprechenden Nummer (2 bis 14) schaltet das `Define` ein oder aus. |
+```bash
+==============
+Template Tools
+==============
 
-*Übersicht:*
+Solution path: C:\Users\...\repos\SEBookStore
+
+[ ----] -----------------------------------------------------------------
+[    1] Path................Change solution path
+[ ----] -----------------------------------------------------------------
+[    2] Copier..............Copy this solution to a domain solution
+[    3] Preprocessor........Setting defines for project options
+[    4] CodeGenerator.......Generate code for this solution
+[    5] Synchronization.....Matches a project with the template
+[    6] Cleanup.............Deletes the temporary directories
+[-----] -----------------------------------------------------------------
+[  x|X] Exit................Exits the application
+
+Choose [n|n,n|a...all|x|X]:
+```
+
+---
+
+### Schritt 7: `Preprocessor` einstellen
+
+Wählen Sie die **Menü-Option:** 3 - `Preprocessor` aus. Anschließend wird das folgende Menü angezeigt:
 
 ```bash
 ========================
 Template Setting Defines
 ========================
 
-Solution path: ...\SEBookStoreAngular
+Solution path: C:\Users\...\source\repos\SEBookStore
 
 [  ---] -----------------------------------------------------------------
 [    1] Path................Change preprocessor solution path
 [  ---] -----------------------------------------------------------------
 [    2] Set definition ACCOUNT_OFF               ==> ACCOUNT_ON
 [  ---] -----------------------------------------------------------------
-[    3] Set definition IDINT_OFF                 ==> IDINT_ON
+[    3] Set definition IDINT_ON                  ==> IDINT_OFF
 [    4] Set definition IDLONG_OFF                ==> IDLONG_ON
-[    5] Set definition IDGUID_ON                 ==> IDGUID_OFF
+[    5] Set definition IDGUID_OFF                ==> IDGUID_ON
 [  ---] -----------------------------------------------------------------
 [    6] Set definition ROWVERSION_OFF            ==> ROWVERSION_ON
-[    7] Set definition EXTERNALGUID_ON           ==> EXTERNALGUID_OFF
+[    7] Set definition EXTERNALGUID_OFF          ==> EXTERNALGUID_ON
 [  ---] -----------------------------------------------------------------
 [    8] Set definition POSTGRES_OFF              ==> POSTGRES_ON
-[    9] Set definition SQLSERVER_ON              ==> SQLSERVER_OFF
-[   10] Set definition SQLITE_OFF                ==> SQLITE_ON
+[    9] Set definition SQLSERVER_OFF             ==> SQLSERVER_ON
+[   10] Set definition SQLITE_ON                 ==> SQLITE_OFF
 [  ---] -----------------------------------------------------------------
 [   11] Set definition DOCKER_OFF                ==> DOCKER_ON
 [   12] Set definition DEVELOP_ON                ==> DEVELOP_OFF
 [   13] Set definition DBOPERATION_ON            ==> DBOPERATION_OFF
-[   14] Set definition GENERATEDCODE_OFF         ==> GENERATEDCODE_ON
+[   14] Set definition GENERATEDCODE_ON          ==> GENERATEDCODE_OFF
 [  ---] -----------------------------------------------------------------
 [   15] Start...............Start assignment process
 [-----] -----------------------------------------------------------------
 [  x|X] Exit................Exits the application
 
-Choose [n|n,n|a...all|x|X]:  
+Choose [n|n,n|a...all|x|X]:
 ```
 
-Erklärung der `Konstanten`:
+Mit diesem Menü können die Projektparameter eingestellt werden.
 
-| Konstante        | Beschreibung                                            |
-|------------------|---------------------------------------------------------|
-| ACCOUNT_ON       | Schaltet die Authentifizierung ein. Ein Zugriff auf die App ist nur mit einem gültigen Konto möglich.
-| IDINT_ON         | Als Identifizierung wird der Datentyp `int` verwendet.  |
-| IDLONG_ON        | Als Identifizierung wird der Datentyp `long` verwendet. |
-| IDGUID_ON        | Als Identifizierung wird der Datentyp `Guid` verwendet. |
-| ROWVERSION_ON    | Schaltet die `optimistische Nebenläufigkeitskontrolle` ein. <br > **INFO:** Wird nicht von der SQLITE-Datenbank unterstützt. |
-| EXTERNALGUID_ON  | Die Identifizierung der Entitäten erfolgt von extern über diese `Guid`. |
-| POSTGRES_ON      | Schaltet die Verwendung der PostgreSQL-Datenbank ein. |
-| SQLSERVER_ON     | Schaltet die Verwendung der SQL-Server-Datenbank ein. |
-| SQLITE_ON        | Schaltet die Verwendung der SQLITE-Datenbank ein.     |
-| DOCKER_ON        | Zeigt an, dass `Docker` verwendet wird. <br > **HINWEIS:** Wird derzeit nicht verwendet.
-| DEVELOPER_ON     | Zeigt an, dass sich das Projekt im Entwicklerstatus befindet. <br > **HINWIES:** Mit diesem Schalter können Entwickler-Funktionen ein.- bzw. ausgeschaltet werden. |
-| DBOPERATION_ON   | Schaltet die Operationen `public static void CreateDatabase()` und `public static void InitDatabase()` ein. <br > **HINWEIS:** Zusätzlich müssen die `Defines` 'DEBUG' und 'DEVELOP_ON' eingeschaltet sein.
-| GENERATEDCODE_ON | Zeigt an, dass die Code-Generierung durchgeführt wurde. <br > **HINWEIS:** Diese `Konstante` wird automatisch vom Code-Generator gesetzt. |
-
-*Menü-Auswahl:* `Path`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 1       | Change path         | Ändert den Pfad der Vorlage. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | In Abhängigkeit der Pfad-Tiefe werden alle Verzeichnisse aufgelistet. |
-| 2       | Wählen Sie einen Pfad mit der angegebenen Nummer aus oder geben Sie den Pfad direkt ein. |
-| 3       | Prüfung, ob das Verzeichnis existiert?     |
-| 4       | Wenn ja, dann wird die Änderung übernommen, <br > *sonst* wird die Änderung verworfen. |
-| 5       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `2 bis 14`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 2 - 14  | Define ändern       | Ändern des entsprechenden 'Define'. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 2 - 14  | Ändert den Status des entsprechenden 'Define' <br > ON ==> OFF oder OFF ==> ON. |
-
-*Menü-Auswahl:* `Exit`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| x od. X | Exit                | Beendet die 'Preprocessor-App'. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Beendet die Anwendung und zeigt das `Hauptmenü` an. |
+### Schritt 8: Entity-`Book` erstellen
 
 ```bash
-==============  
-Template Tools  
-==============  
+namespace SEBookStore.Logic.Entities
+{
+    /// <summary>
+    /// Represents a book entity.
+    /// </summary>
+    [Table("Books")]
+    [Index(nameof(ISBNNumber), IsUnique = true)]
+    [Index(nameof(Author), nameof(Title), IsUnique = true)]
+    public partial class Book : EntityObject
+    {
+        private string iSBNNumber = string.Empty;
 
-Solution path: ...\SEBookStoreAngular
+        /// <summary>
+        /// Gets or sets the ISBN number of the book.
+        /// </summary>
+        [Required, MaxLength(10)]
+        public string ISBNNumber 
+        { 
+            get => iSBNNumber; 
+            set => iSBNNumber = value.Replace("-", string.Empty); 
+        }
+        /// <summary>
+        /// Gets or sets the author of the book.
+        /// </summary>
+        [Required, MaxLength(128)]
+        public string Author { get; set; } = string.Empty;
 
-[ ----] -----------------------------------------------------------------  
-[    1] Path................Change solution path  
-[ ----] -----------------------------------------------------------------  
-[    2] Copier..............Copy this solution to a domain solution  
-[    3] Preprocessor........Setting defines for project options  
-[    4] CodeGenerator.......Generate code for this solution  
-[    5] Synchronization.....Matches a project with the template  
-[    6] Cleanup.............Deletes the temporary directories  
-[-----] -----------------------------------------------------------------  
-[  x|X] Exit................Exits the application  
+        /// <summary>
+        /// Gets or sets the title of the book.
+        /// </summary>
+        [Required, MaxLength(256)]
+        public string Title { get; set; } = string.Empty;
 
-Choose [n|n,n|a...all|x|X]:  
+        /// <summary>
+        /// Gets or sets the description of the book.
+        /// </summary>
+        [Required, MaxLength(2048)]
+        public string Description { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the year of release of the book.
+        /// </summary>
+        public int YearOfRelease { get; set; }
+
+        /// <summary>
+        /// Gets or sets the price of the book.
+        /// </summary>
+        public double Price { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Author} - {Title}";
+        }
+    }
+}
 ```
+
+**Erstellungsrichtlinien:**
+
+- Erstellen Sie sie Entität-`Book` als `public partial class Book`-Klasse.
+- Leiten Sie die Entität-`Book` von `EntityObject` oder `VersionEntityObject` ab.
+- Geben Sie den Tabellenname als Klassen-Attribut `[Table("...")]` über der Klasse an.
+- Erstellen Sie alle Eigenschaften und deren Einschränkungen `[MaxLength(10)]`.
+- Geben Sie alle Index-Einschränkungen als Klassen-Attribute `[Index(..., IsUnique = true)]` an.
+
+**Prüfung der Entität-`Book`:**
+
+| Klasse | Prüfung | Ergebnis | Beschreibung |
+|--------|---------|----------|--------------|
+| Book   | Ist die Klasse als `public partial class Book` deklariert? | Ja | Wenn nein, tritt ein Fehler beim Verbinden von der Schnittstelle `IBook` mit der `Book`-Klasse auf. |
+| Book  | Ist die Klasse von `EntityObject` oder `VersionEntityObject` abgeleitet? | Ja |  Wenn nein, wird `Book` nicht als Entität erkannt. |
+| Book  | Ist die Klasse mit dem Attribut [Table("...")] versehen? | Ja | Wenn nein, wird ein Standardnamen vergeben. |
+| Book  | Sind die Eigenschaften mit den Attributen [MaxLength(...)] versehen? | Ja | Wenn nein, werden die Standardwerte verwendet. |
+| Book  | Sind die Eigenschaften mit den Attributen [Required] versehen? | Ja | Wenn nein, werden die Standardwerte verwendet (Abhängig von der dotnet- Version). |
+| Book  | Sind die Eigenschaften mit den Attributen [Index(..., IsUnique = true)] versehen? |Ja  | Wenn nein, wird kein Index erstellt. |
+
+### Schritt 9: Validierung für das Entity-`Book` erstellen
+
+In diesem Schritt werden die Geschäftsregeln für die Entität-`Book` implementiert.
+
+>**Tipp:** Erstellen Sie eine weiter partial-Klasse und implementieren Sie die Schnittstelle IValidatableEntity. Diese Schnittstelle ist in der Datei SETemplate.Common/Contracts/IValidatableEntity.cs definiert. Verwenden Sie als Dateinamen BookValidation.cs.
+
+```bash
+using SEBookStore.Logic.Contracts;
+using SEBookStore.Logic.Exceptions;
+
+namespace SEBookStore.Logic.Entities
+{
+    /// <summary>
+    /// Represents a book entity with validation logic.
+    /// </summary>
+    partial class Book : IValidatableEntity
+    {
+        /// <summary>
+        /// Validates the properties of the book entity.o
+        /// </summary>
+        /// <param name="context">The context in which the validation is performed.</param>
+        /// <exception cref="BusinessException">
+        /// Thrown when any of the following validation rules are violated:
+        /// <list type="bullet">
+        /// <item><description>The ISBN number is invalid.</description></item>
+        /// <item><description>The author's name is less than 3 characters long.</description></item>
+        /// <item><description>The title is less than 5 characters long.</description></item>
+        /// <item><description>The year of release is not between 1900 and the next calendar year.</description></item>
+        /// <item><description>The price is not between EUR 1 and EUR 10,000.</description></item>
+        /// </list>
+        /// </exception>
+        public void Validate(IContext context, EntityState entityState)
+        {
+            // A1
+            if (CheckISBNNumber(ISBNNumber) == false)
+            {
+                throw new BusinessException("Invalid ISBN number");
+            }
+            // A2
+            if (Author.Length < 3)
+            {
+                throw new BusinessException("The character length of the author must be at least 3 characters long.");
+            }
+            // A3
+            if (Title.Length < 5)
+            {
+                throw new BusinessException("The character length of the title must be at least 5 characters long.");
+            }
+            // A4
+            if (YearOfRelease < 1900 || YearOfRelease > DateTime.Now.Year + 1)
+            {
+                throw new BusinessException($"The publication must be between 1900 and {DateTime.Now.Year + 1}.");
+            }
+            // A5
+            if (Price < 1.0 || Price > 10_000.0)
+            {
+                throw new BusinessException("The price must be between EUR 1 and EUR 10,000.");
+            }
+        }
+
+        /// <summary>
+        /// Validates the given ISBN number based on the ISBN-10 standard.
+        /// </summary>
+        /// <param name="number">The ISBN number to validate.</param>
+        /// <returns>
+        /// Returns <c>true</c> if the ISBN number is valid; otherwise, <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// The method checks if the input string is 10 characters long, where the first 9 characters are digits,
+        /// and the last character can be a digit or 'X' (case-insensitive). It also verifies the checksum
+        /// using the modulo 11 algorithm.
+        /// </remarks>
+        public static bool CheckISBNNumber(string number)
+        {
+            var result = number != null && number.Where((c, i) => i == 9 ? (c == 'X' || c == 'x' || char.IsDigit(c)) : char.IsDigit(c)).Count() == 10;
+
+            var sum = 0;
+            var rest = 0;
+
+            for (int i = 0; result && i < number?.Length - 1; i++)
+            {
+                sum += (number == null ? 0 : number[i] - '0') * (i + 1);
+            }
+
+            rest = sum % 11;
+
+            return result && number != null && ((rest == 10 && char.ToUpper(number[^1]) == 'X') || (rest == number[^1] - '0'));
+        }
+    }
+}
+```
+
+**Erstellungsrichtlinien:**
+
+- Erstellen Sie eine weiter Klasse `partial class Book : IValidatableEntity` und implementieren Sie die Schnittstelle `IValidatableEntity`.
+- Vergeben Sie für die Klasse den Dateinamen 'BookValidation.cs'.
+- Implementieren Sie die Methode Validate(IContext context).
+
+**Prüfung der Entität-`Book`-Validation:**
+
+| Klasse | Prüfung | Ergebnis | Beschreibung |
+|--------|---------|----------|--------------|
+| Book  | Ist die Klasse als `partial class Book : IValidatableEntity` deklariert? | Ja | Wenn nein, wird die Validierung nicht mit der Entität-`Book` verbunden. |
+| Book  | Ist die Geschäftsregel A1 implementiert? | Ja | Wenn nein, können ungültige Werte in der ISBNNummer eingetragen werden. |
+| Book  | Ist die Geschäftsregel A2 implementiert? | Ja | Wenn nein, können Namen mit weniger als < 3 Zeichen eingetragen werden. |
+| Book  | Ist die Geschäftsregel A3 implementiert? | Ja | Wenn nein, können Buchtiteln mit weniger als < 5 Zeichen eingetragen werden. |
+| Book  | Ist die Geschäftsregel A4 implementiert? | Ja | Wenn nein, können ungültige Erscheinungsjahre eingetragen werden. |
+| Book  | Ist die Geschäftsregel A5 implementiert? | Ja | Wenn nein, können ungültige Preise eingetragen werden. |
 
 ---
 
-##### Menü: CodeGenerator
+### Schritt 10: Starten der `CodeGenerierung`
 
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 4       | CodeGenerator       | Generiert für die aktuelle Vorlage den Programm-Code. |
+Bevor mit der Code-Generierung begonnen werden kann, müssen die folgenden Schritte durchgeführt werden:
 
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt in das Menü `CodeGenerator`-App.  |
+- Die Entität-`Book` ist erstellt und alle Prüfschritte haben das Ergebniss 'Ja'.
+- Die Entität-`Book` ist validiert und alle Prüfschritte haben das Ergebnis 'Ja'.
+- Die Projektmappe `SEBookStore` kann fehlerfrei erstellt werden.
+
+Starten das Programm `TemplateTools.ConApp` und wählen Sie die **Menü-Option:** 4 - `CodeGenerator` aus. Anschließend wird das folgende Menü angezeigt:
 
 ```bash
 =======================
 Template Code Generator
 =======================
 
-Solution path:                    ...\SEBookStoreAngular
+Solution path:                    C:\Users\...\repos\SEBookStore
 ---------------------------------
 Write generated source into:      Single files
 Write info header into source:    True
@@ -418,593 +590,413 @@ Exclude generated files from GIT: True
 [-----] -----------------------------------------------------------------
 [  x|X] Exit................Exits the application
 
-Choose [n|n,n|a...all|x|X]:  
+Choose [n|n,n|a...all|x|X]:
 ```
 
-*Menü-Auswahl:* `Generation file`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 1       | Generation file     | Gibt an, ob die Generierung in einer Datei (`_GeneratedCode.cs`) oder je Klasse in einer eigenen Datei erfolgen soll. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt den Generierungsmode <br > **Single file ==> Group file** oder **Group file ==> Single file**. |
-
-*Menü-Auswahl:* `Add info header`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 2       | Add info header     | Gibt an, ob in der Code-Generierungsdatei ein Info-Text eingefügt wird. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt das Flag **Add info header** <br > **HINWEIS:** Diese Einstellung gilt nur für den **Single file**-Modus. |
-
-*Menü-Auswahl:* `Delete folders`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 3       | Delete folders      | Gibt an, ob bei der Code-Generierung die leeren Ordner gelöscht werden. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt die Option für das **Löschen** der leeren Ordner. |
-
-*Menü-Auswahl:* `Exclude files`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 4       | Exclude files       | Gibt an, ob bei der Code-Generierung die generierten Datein in das **'.gitignore'** eingetragen werden. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt die Option für das **Ausschließen** von generierten Datein im GIT-Repository. |
-
-*Menü-Auswahl:* `Source path`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 2       | Source path         | Ändert den Pfad der Vorlage. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | In Abhängigkeit der Pfad-Tiefe werden alle Verzeichnisse aufgelistet. |
-| 2       | Wählen Sie einen Pfad mit der angegebenen Nummer aus <br > oder geben Sie den Pfad ein: |
-| 3       | Prüfung, ob das Verzeichnis existiert?     |
-| 4       | Wenn ja, dann wird die Änderung übernommen, <br > *sonst* wird die Änderung verworfen. |
-| 5       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `Compile`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 6       | Compile             | Kompiliert den Quellcode und zeigt das Ergebnis an. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Kompiliert das `Solutionname.Common` Projekt und legt das Kompilat in einem temporären Ordner ab. |
-| 2       | Kompiliert das `Solutionname.Logic` Projekt und legt das Kompilat in einem temporären Ordner ab. |
-| 3       | Zeigt das Ergebnis des Kompilierens an. <br > **HINWEIS:** Falls Fehler vorhanden sind, korrigieren Sie diese. |
-| 4       | Bestätigen Sie das Ergebnis mit der **Enter-Taste**. |
-
-*Ausgabe:* `Compile`
-
-```bash
-=======================
-Template Code Generator
-=======================
-
-Solution path:                    ...\SEBookStoreAngular
----------------------------------
-Write generated source into:      Singel files
-Write info header into source:    True
-Delete empty folders in the path: True
-Exclude generated files from GIT: True
-
-========================>                                            4 [sec]
-
-Compile project...
-dotnet build "...\SEBookStoreAngular\SEBookStoreAngular.Logic\SEBookStoreAngular.Logic.csproj" -c Release -o "...\Local\Temp\SEBookStoreAngular"
-Restore complete (0.5s)
-  SEBookStoreAngular.Common succeeded (2.5s) → ...\Local\Temp\SEBookStoreAngular\SEBookStoreAngular.Common.dll
-  SEBookStoreAngular.Logic succeeded (0.7s) → ...\Local\Temp\SEBookStoreAngular\SEBookStoreAngular.Logic.dll
-
-Build succeeded in 4.4s
-Press enter...                                                                                                  
-```
-
-*Menü-Auswahl:* `Delete files`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 7       | Delete files        | Löscht alle zuvor mit dem Code-Generator erzeugten Datein. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Sammelt alle Dateien welche mit dem Label `@GeneratedCode` gekennzeichnet sind. |
-| 2       | Anschließend werden alle Dateien mit diesem Label gelöscht. |
-| 3       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `Delete folders`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 8       | Delete folders      | Löscht alle leeren Ordner im `Solution path`. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Alle Ordner innerhalb der `Solution` werden überprüft, ob Dateien enthalten sind. |
-| 2       | Wenn nein, dann wird der Ordner gelöscht, <br > *sonst* erfolgt keine Aktion. |
-| 5       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `Start`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 9       | Start               | Erzeugt Quellcode auf Basis der definierten **Entitäten** und **Views** im Projekt **Solutionname.Logic**. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Kompiliert das `Solutionname.Common` Projekt und legt das Kompilat in einem temporären Ordner ab. |
-| 2       | Kompiliert das `Solutionname.Logic` Projekt und legt das Kompilat in einem temporären Ordner ab. |
-| ---     | ***Common.Contracts*** |
-| 3       | Ermittelt aus dem Projekt `Solutionname.Logic` alle **Entitäten** per `Reflection`. <br > **Hinweis:** Aus diesem Grund muss das Projekt fehlerfrei kompiliert werden können. |
-| 4       | Generiert zu allen **Entitäten** die `Schnittstellen` in den Ordner `Common.Contracts`. <br > **Hinweis:** **Entitäten** sind **Klassen** im Ordner `Logic.Entities` und erfüllen die Beziehung `is a EntityObject`. |
-| ---     | ***Logic.Entities*** |
-| 5       | Generiert zu allen **Entitäten** die **Verbindungen** mit den generierten `Schnittstellen` in `Common.Contracts` in den Ordner `Logic.Entities`. <br > **Hinweis:** **Entitäten** müssen mit dem Modifier `partial` versehen sein und die generierte Datei hat den Namen 'EntityNameGeneration.cs'. |
-| ---     | ***Logic.DataContext*** |
-| 6       | Generiert zu allen **Entitäten** die entsprechenden `EntitySet`-Klassen in den Ordner `Logic.DataContext`. |
-| ---     | ***Logic.Contracts*** |
-| 7       | Generiert zu allen **Entitäten** die entsprechenden `EntitySet`-Schnittstellen in den Ordner `Logic.Contracts`. |
-| ---     | ***Common.Contracts*** |
-| 3       | Ermittelt aus dem Projekt `Solutionname.Logic` alle **Views** per `Reflection`. <br > **Hinweis:** Aus diesem Grund muss das Projekt fehlerfrei kompiliert werden können. |
-| 4       | Generiert zu allen **Views** die `Schnittstellen` in den Ordner `Common.Contracts`. <br > **Hinweis:** **Views** sind **Klassen** im Ordner `Logic.Entities` und erfüllen die Beziehung `is a ViewObject`. |
-| ---     | ***Logic.Entities*** |
-| 5       | Generiert zu allen **Views** die **Verbindungen** mit den generierten `Schnittstellen` in `Common.Contracts` in den Ordner `Logic.Entities`. <br > **Hinweis:** **Views** müssen mit dem Modifier `partial` versehen sein und die generierte Datei hat den Namen 'ViewNameGeneration.cs'. |
-| ---     | ***Logic.DataContext*** |
-| 6       | Generiert zu allen **Views** die entsprechenden `ViewSet`-Klassen in den Ordner `Logic.DataContext`. |
-| ---     | ***Logic.Contracts*** |
-| 7       | Generiert zu allen **Views** die entsprechenden `ViewSet`-Schnittstellen in den Ordner `Logic.Contracts`. |
-| ---     | ***Logic.DataContext*** |
-| 13      | Generiert eine `partial class ProjectDbContext` mit dem Dateinamen 'ProjectDbContextGeneration.cs'. <br > **INFO:** Erstellt alle Eigenschaften vom Typ `DbSet<T>`,  `EntitySet<T>`, `ViewSet<T>` und die <br > Methoden `void GetGeneratorDbSet<E>(...)`, `void GetGeneratorEntitySet<E>(...)`, `void GetGeneratorViewSet<E>(...)` <br > sowie die Methode `static partial void OnViewModelCreating(ModelBuilder modelBuilder)`. |
-| ---     | ***Logic.Contracts*** |
-| 14      | Generiert eine `partial interface IContext` mit dem Dateinamen 'IContextGeneration.cs'. <br > **INFO:** Erstellt alle Eigenschaften für den öffentlichen Zugriff auf die `EntitySet<T>`('s) und `ViewSet<T>`('s). |
-| ---     | ***WebApi.Models*** |
-| 15      | Generiert zu allen `Schnittstellen` im Ordner `Common.Contracts` die Models in den Ordner `WebApi.Models`. |
-| 16      | Generiert zu allen `Schnittstellen` im Ordner `Common.Contracts` die `Edit`-Models in den Ordner `WebApi.Models`. <br > **INFO:** `Edit`-Models sind Models ohne **'Id'**. |
-| ---     | ***WebApi.Controllers*** |
-| 17      | Generiert zu allen **Entitäten** die entsprechenden `Controller`-Klassen in den Ordner `WebApi.Controllers`. <br > **INFO:** Die `Controller`-Klassen implementieren die `CRUD`-Operationen und können mit einer `partial`-Klasse beliebig erweitert werden. |
-| 18      | Generiert zu allen **Views** die entsprechenden `Controller`-Klassen in den Ordner `WebApi.Controllers`. <br > **INFO:** Die `Controller`-Klassen implementieren die `QUERY`-Operationen und können mit einer `partial`-Klasse erweitert werden. |
-| 19      | Generiert eine `partial class ContextAccessor` mit dem Dateinamen `ContextAccessorGeneration.cs`. <br > **INFO:**  Erstellt die Methoden `void GetEntitySetHandler<TEntity>(...)` und `void GetViewSetHandler<TView>(...)` für den Zugriff auf die entsprechenden Set's.  |
-| ---     | ***MVVM.Models*** |
-| 20      | Generiert zu allen `Schnittstellen` im Ordner `Common.Contracts` die Models in den Ordner `MVVM.Models`. |
-| ---     | ***MVVM.ViewModels*** |
-| 21      | Generiert zu allen **Entities** die `ViewModels` in den Ordner `MVVM.ViewModels`. <br > **INFO:** Zu jedem Entity wird ein `ViewModel` für die **List-Ansicht** und für die **Single-Ansicht** erstellt. |
-| ---     | ***Angular*** |
-| ---     | Die Code-Generierung für die **Angular**-Komponenten erfolgt zu einem späteren Zeitpunkt. |
-
-*Menü-Auswahl:* `Exit`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| x od. X | Exit                | Beendet die `CodeGeneration`-App. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Beendet die Anwendung und zeigt das `Hauptmenü` an. |
-
-```bash
-==============  
-Template Tools  
-==============  
-
-Solution path: ...\SEBookStoreAngular
-
-[ ----] -----------------------------------------------------------------  
-[    1] Path................Change solution path  
-[ ----] -----------------------------------------------------------------  
-[    2] Copier..............Copy this solution to a domain solution  
-[    3] Preprocessor........Setting defines for project options  
-[    4] CodeGenerator.......Generate code for this solution  
-[    5] Synchronization.....Matches a project with the template  
-[    6] Cleanup.............Deletes the temporary directories  
-[-----] -----------------------------------------------------------------  
-[  x|X] Exit................Exits the application  
-
-Choose [n|n,n|a...all|x|X]:  
-```
-
----
-
-##### Menü: Synchronization
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 5       | Synchronization     | Synchronisiert ein bestehendes Domain-Projekt mit dem aktuellen Template. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt in das Menü `Synchronization`-App.|
-
-```bash
-========================
-Template Synchronization
-========================
-
-Balance labels(s):
-  @CodeCopy       => @CodeCopy
-  @CodeCopy       => @CodeCopy
-Source code path:    ...\SEBookStoreAngular
-
-[-----] -----------------------------------------------------------------
-[    1] Path................Change the source solution path
-[    2] Add path............Add a target path
-[-----] -----------------------------------------------------------------
-[    3] Synchronize with   .\SEContactManager
-[    4] Synchronize with   .\SETranslator
-[-----] -----------------------------------------------------------------
-[  x|X] Exit................Exits the application
-
-Choose [n|n,n|a...all|x|X]:  
-```
-
-*Menü-Auswahl:* `Pfad ändern`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 1       | Path                | Ändert das Verzeichnis (Pfad), in dem das aktuelle Template liegt. |
-|         |                     | *Change path:* ...\SEBookStoreAngular zeigt den aktuellen Template-Pfad an. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | In Abhängigkeit der Pfad-Tiefe werden alle Verzeichnisse aufgelistet. |
-| 2       | Wählen Sie einen Pfad mit der angegebenen Nummer aus oder geben Sie den Pfad direkt ein. |
-| 3       | Prüfung, ob das Verzeichnis existiert?     |
-| 4       | Wenn ja, dann wird die Änderung übernommen, <br > *sonst* wird die Änderung verworfen. |
-| 5       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `Add path`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 2       | Add path            | Fügt einen neuen Pfad in die Synchron-Auflistung hinzu. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Aufforderung zur Eingabe des neuen Pfads.  |
-| 2       | Prüfung, ob das Verzeichnis existiert?     |
-| 3       | Wenn ja, dann wird die Änderung übernommen und in die Menü-Optionen gewechselt. |
-| 4       | Wenn nein, die Änderung wird ignoriert und in die Menü-Optionen gewechselt.    |
-
-*Menü-Auswahl:* `Synchronize with .\SETranslator`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 4       | Synchronize with    | Synchronisiert den Quellcode mit dem Projekt 'SETranslator'. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt in das Menü `PartialSynchronization`-App.|
-
-```bash
-================================
-Template Partial Synchronization
-================================
-
-Balance labels(s):
-  @CodeCopy       =>             @CodeCopy
-  @CodeCopy       =>             @CodeCopy
---------------------------------
-Source code path:                ...\SEBookStoreAngular
-Target code path:                ...\SETranslator
-
-[-----] -----------------------------------------------------------------
-[    1] 1...................Change max sub path depth
-[-----] -----------------------------------------------------------------
-[    2] Synchronize with....\Diagrams
-[    3] Synchronize with....\SETranslator.CodeGenApp
-[    4] Synchronize with....\SETranslator.Common
-[    5] Synchronize with....\SETranslator.ConApp
-[    6] Synchronize with....\SETranslator.Logic
-[    7] Synchronize with....\SETranslator.MVVMApp
-[    8] Synchronize with....\SETranslator.WebApi
-[    9] Synchronize with....\TemplateTools.ConApp
-[   10] Synchronize with....\TemplateTools.Logic
-[-----] -----------------------------------------------------------------
-[  x|X] Exit................Exits the application
-
-Choose [n|n,n|a...all|x|X]:  
-```
-
-Mit diesem Menü besteht die Möglichkeit, einzelne Module zu synchronisieren. Dazu muss nur die Nummer des Modules eingegeben werden. Die Eingabe 'a' | 'A' bewirkt, dass alle Module synchronisiert werden. 
-
-*Menü-Auswahl:* `Exit`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| a od. A | Synchronize         | Alle Module werden synchronisiert. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Im Zielpfad werden alle Dateien mit dem Label `@CodeCopy` ermittelt. |
-| 2       | Alle Dateien mit dem Label `@CodeCopy` werden aus dem Zielpfad entfernt. |
-| 3       | Im Quellpfad werden alle Dateien mit dem Label `@CodeCopy` ermittelt. |
-| 4       | Alle Dateien mit dem Label `@CodeCopy` aus dem Quellpfad werden in den Zielpfad kopiert. <br > Bei diesem Kopieren werden die Labels `@CodeCopy` durch den Label `@CodeCopy` ersetzt. | 
-
-*Menü-Auswahl:* `Exit`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| x od. X | Exit                | Beendet die 'Synchronisation' von Modulen. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt in das Untermenü 'Synchronisation-App'. |
-
-```bash
-========================
-Template Synchronization
-========================
-
-Balance labels(s):
-  @CodeCopy       => @CodeCopy
-  @CodeCopy       => @CodeCopy
-Source code path:    ...\SEBookStoreAngular
-
-[-----] -----------------------------------------------------------------
-[    1] Path................Change the source solution path
-[    2] Add path............Add a target path
-[-----] -----------------------------------------------------------------
-[    3] Synchronize with   .\SEContactManager
-[    4] Synchronize with   .\SETranslator
-[-----] -----------------------------------------------------------------
-[  x|X] Exit................Exits the application
-
-Choose [n|n,n|a...all|x|X]:  
-```
-
-*Menü-Auswahl:* `Exit`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| x od. X | Exit                | Beendet die 'Synchronize-App'. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Beendet die Anwendung und zeigt das `Hauptmenü` an. |
-
-```bash
-==============  
-Template Tools  
-==============  
-
-Solution path: ...\SEBookStoreAngular
-
-[ ----] -----------------------------------------------------------------  
-[    1] Path................Change solution path  
-[ ----] -----------------------------------------------------------------  
-[    2] Copier..............Copy this solution to a domain solution  
-[    3] Preprocessor........Setting defines for project options  
-[    4] CodeGenerator.......Generate code for this solution  
-[    5] Synchronization.....Matches a project with the template  
-[    6] Cleanup.............Deletes the temporary directories  
-[-----] -----------------------------------------------------------------  
-[  x|X] Exit................Exits the application  
-
-Choose [n|n,n|a...all|x|X]:  
-```
-
----
-
-##### Menü: Cleanup
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 6       | Cleanup             | Löscht temporäre Verzeichnisse und Dateien, die während der vorherigen Aktionen angelegt wurden. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Wechselt in das Untermenü 'Cleanup-App'.   |
-
-```bash
-============================
-Template Cleanup Directories
-============================
-
-Drop folders: \bin, \obj, \target
-Cleanup path: ...\repos
-
-[  ---] -----------------------------------------------------------------
-[    1] Path................Change drop path
-[  ---] -----------------------------------------------------------------
-[    2] Cleanup.............\SEBookStore
-[    3] Cleanup.............\SETranslator
-[-----] -----------------------------------------------------------------
-[  x|X] Exit................Exits the application
-
-Choose [n|n,n|a...all|x|X]:  
-```
-
-*Menü-Auswahl:* `Pfad ändern`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 1       | Path                | Ändert das Verzeichnis (Pfad), in welchem die Ordner bereinigt werden sollen. |
-|         |                     | *Change path:* ...\repos zeigt den aktuellen Pfad an. |
-
-| 1       | In Abhängigkeit der Pfad-Tiefe werden alle Verzeichnisse aufgelistet. |
-| 2       | Wählen Sie einen Pfad mit der angegebenen Nummer aus oder geben Sie den Pfad direkt ein. |
-| 3       | Prüfung, ob das Verzeichnis existiert?     |
-| 4       | Wenn ja, dann wird die Änderung übernommen, <br > *sonst* wird die Änderung verworfen. |
-| 5       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `Cleanup`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| 2       | Cleanup             | Bereinigt das Verzeichnis 'SEBookStore'. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Das Verzeichnis 'SEBookStore' wird rekursiv durchlaufen. |
-| 2       | Befindet sich ein Ordner mit dem Namen 'bin', dann wird dieser gelöscht. |
-| 3       | Befindet sich ein Ordner mit dem Namen 'obj', dann wird dieser gelöscht. |
-| 4       | Befindet sich ein Ordner mit dem Namen 'target', dann wird dieser gelöscht. |
-| 5       | Zurück in die Menü-Optionen.               |
-
-*Menü-Auswahl:* `Exit`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| x od. X | Exit                | Beendet die 'Cleanup-App'. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Beendet die Anwendung und zeigt das `Hauptmenü` an. |
-
-```bash
-==============  
-Template Tools  
-==============  
-
-Solution path: ...\SEBookStoreAngular
-
-[ ----] -----------------------------------------------------------------  
-[    1] Path................Change solution path  
-[ ----] -----------------------------------------------------------------  
-[    2] Copier..............Copy this solution to a domain solution  
-[    3] Preprocessor........Setting defines for project options  
-[    4] CodeGenerator.......Generate code for this solution  
-[    5] Synchronization.....Matches a project with the template  
-[    6] Cleanup.............Deletes the temporary directories  
-[-----] -----------------------------------------------------------------  
-[  x|X] Exit................Exits the application  
-
-Choose [n|n,n|a...all|x|X]:  
-```
-
----
-
-*Menü-Auswahl:* `Exit`
-
-| Auswahl | Funktion            | Beschreibung |
-|---------|---------------------|--------------|
-| x od. X | Exit                | Beendet die 'TemplateTools'-App. |
-
-| Ablauf  | Beschreibung                               |
-|---------|--------------------------------------------|
-| 1       | Beendet die Anwendung.                     |
-
-## Beispiele
-
-Um das Arbeiten mit dem Tool zu erleichtern, sind hier einige Beispiele aufgeführt. Diese Beispiele sind einfach und sollen nur als Anregung dienen.
-
-> **Konvention:** Alle Beispiele welche mit dem `SEBookStoreAngular` erstellt wurden, sind mit dem Präfix `SE` gekennzeichnet.
-
-### Beispiel 1: SEBookStore
-
-Bei diesem Beispiel wurde eine kleine Buchhandlung erstellt. Diese Buchhandlung verwaltet eine Liste von Büchern.
-
-Sie finden die Anleitung [hier](https://github.com/leoggehrer/SEBookStore).
-
-## Authentifizierung
-
-Das `SEBookStoreAngular` enthält ein Authentifizierungsmodul, damit der Zugriff auf die Anwendung eingeschränkt werden kann. Um das Modul zu aktivieren, muss der `ACCOUNT`-Schalter auf `ON` gestellt werden. Die Einstellung kann im Abschnitt `Preprocessor` erfolgen:
-
-```bash
-========================
-Template Setting Defines
-========================
-
-Solution path: ...\SEBookStoreAngular
-
-[  ---] -----------------------------------------------------------------
-[    1] Path................Change preprocessor solution path
-[  ---] -----------------------------------------------------------------
-[    2] Set definition ACCOUNT_ON                ==> ACCOUNT_OFF
-[  ---] -----------------------------------------------------------------
-[    3] Set definition IDINT_ON                  ==> IDINT_OFF
-[    4] Set definition IDLONG_OFF                ==> IDLONG_ON
-[    5] Set definition IDGUID_OFF                ==> IDGUID_ON
-[  ---] -----------------------------------------------------------------
-[    6] Set definition ROWVERSION_OFF            ==> ROWVERSION_ON
-[    7] Set definition EXTERNALGUID_OFF          ==> EXTERNALGUID_ON
-[  ---] -----------------------------------------------------------------
-[    8] Set definition POSTGRES_ON               ==> POSTGRES_OFF
-[    9] Set definition SQLSERVER_OFF             ==> SQLSERVER_ON
-[   10] Set definition SQLITE_OFF                ==> SQLITE_ON
-[  ---] -----------------------------------------------------------------
-[   11] Set definition DOCKER_OFF                ==> DOCKER_ON
-[   12] Set definition DEVELOP_ON                ==> DEVELOP_OFF
-[   13] Set definition DBOPERATION_ON            ==> DBOPERATION_OFF
-[   14] Set definition GENERATEDCODE_OFF         ==> GENERATEDCODE_ON
-[  ---] -----------------------------------------------------------------
-[   15] Start...............Start assignment process
-[-----] -----------------------------------------------------------------
-[  x|X] Exit................Exits the application
-
-Choose [n|n,n|a...all|x|X]:  
-```
-
-### Rollenbasiertes Zugriffssytem
-
-Das Authentifizierungssystem unterstützt ein rollenbasiertes Zugriffssystem, um den Zugriff auf verschiedene Bereiche und Funktionen der Anwendung zu steuern. Dieses System ermöglicht es, Benutzern spezifische Rollen zuzuweisen, die ihre Berechtigungen innerhalb der Anwendung definieren.
-
-#### Funktionsweise
-
-Das rollenbasierte Zugriffssystem basiert auf den folgenden Konzepten:
-
-1. **Rollen**: Eine Rolle ist eine Sammlung von Berechtigungen, die einem Benutzer zugewiesen werden können. Beispiele für Rollen sind `SysAdmin`, `AppAdmin`, `AppUser`, `Viewer` usw.
-2. **Berechtigungen**: Berechtigungen definieren, welche Aktionen ein Benutzer innerhalb der Anwendung ausführen darf, z. B. "Lesen", "Schreiben", "Löschen".
-3. **Benutzer**: Jeder Benutzer kann eine oder mehrere Rollen besitzen, die seine Berechtigungen bestimmen.
-
-**Datenmodell:**
-
-![Datenmodell](/img/account.png)
-
-Das zentrale Element in diesem Model ist das `Identity`-Objekt. Dies stellt eine Registrierung im System dar und kann mit beliebig vielen Rollen verknüpft sein. In einer Ableitung (`SecureIdentity`) von `Identity`, sind die beiden verschlüsselten Daten `PasswordHash` und `PasswordSalt` abgelegt.
-
-##### PasswordHash und PasswordSalt
-
-`PasswordHash` und `PasswordSalt` sind zwei zentrale Konzepte in der sicheren Speicherung von Passwörtern in Datenbanken. Sie helfen dabei, Passwörter vor Diebstahl und Missbrauch zu schützen.
-
-###### PasswordHash
-
-Ein PasswordHash ist ein kryptografisch erzeugter Wert, der aus einem Passwort berechnet wird – meist unter Einsatz eines Hash-Algorithmus wie SHA-256, bcrypt, scrypt oder Argon2.
-
-- **Nicht umkehrbar:** Aus dem Hash kann das ursprüngliche Passwort nicht mehr berechnet werden.
-- **Zweck:** Wird in der Datenbank gespeichert, um beim Login-Versuch das eingegebene Passwort zu verifizieren.
-- **Beispiel:**
-
-```bash
-Passwort: "meinGeheimesPasswort"
-Hash (z.B. mit SHA-256): "5e884898da280471..."
-```
-
-###### PasswordSalt
-
-Ein PasswordSalt ist eine zufällige Zeichenfolge (z. B. 16–32 Byte), die beim Hashen des Passworts mitverwendet wird.
-
-- **Zweck:** Verhindert, dass zwei gleiche Passwörter denselben Hash erzeugen.
-- **Schützt gegen:** Rainbow-Table-Angriffe (vorgefertigte Tabellen mit bekannten Passwort-Hashes).
-- **Funktionsweise:** Das Salt wird mit dem Passwort kombiniert, bevor gehasht wird:
-
-```bash
-saltedPassword = Salt + Passwort
-PasswordHash = Hash(saltedPassword)
-```
-
-##### TimeOutInMinutes
-
-Zu jedem `Identity`-Objekt wird ein `TimeOutInMinutes`-Wert hinterlegt. Dies bedeutet, dass die Anmeldung automatisch nach einer inaktiven Zeit in Minuten abgemeldet wird. Ausgenommen der Wert ist mit `0` definiert, dann erfolgt keine automatische Abmeldung.
-
-#### Anmeldung
-
-Die Anmeldung erfolgt mit der entsprechenden **Email**-Adresse und dem dazugehörigen **Kennwort**. Dabei wird überprüft, ob die **Email** mit dem **Kennwort** übereinstimmt. Wenn nicht, dann wird die Anmeldung abgewiesen, eine Ausnahme (`AuthorizationException(...)`) ausgelöst und der Zugriff auf das System verweigert. Findet eine Übereinstimmung statt, dann wird das dazugehörige `LoginSession`-Model zurückgegeben. In diesem Model befinden sich Daten für die zukünftigen Interaktionen mit dem System. Das wichtigste Datum ist der `SessionToken`. Für jede Operation bzw. Anweisung an die Anwendung muss der `SessionToken` übermittelt werden. Im nachfolgenden ein Beispiel:
+Bevor Sie mit der `CodeGenerierung` beginnen, können einige Einstellungen vorgenommen werden. Sie finden die Beschreibung in der Dokumentation für [**SE-Template**](https://github.com/leoggehrer/SETemplate).
+
+Nachdem die Einstellung vorgenommen wurde, wählen Sie die **Menü-option:** 9 - `Start` aus. Die `CodeGenerierung` startet und hat folgende Code-Teile generiert:
+
+| Module  | Ordner        | Komponente         | Dateiname                     | Beschreibung                                   |
+|---------|---------------|--------------------|-------------------------------|------------------------------------------------|
+| Common  | Contracts     | `IBook`            | Book.cs                       | Die Schnittstelle für das Entity-`Book` mit `CopyProperties(...)`. |
+| Logic   | Entities      | `Book`             | BookGeneration.cs             | Die Schnittstelle wird mit dem Entity-`Book` verbunden. |
+| Logic   | DataContext   | `BookSet`          | BookSet.cs                    | Die `Set`-Management Klasse für den Zugriff. |
+| Logic   | Contracts     | `IBookSet`         | IBookSet.cs                   | Die Schnittstelle für die `BookSet`-Klasse. |
+| Logic   | DataContext   | `ProjectDbContext` | ProjectDbContextGeneration.cs | Enthält die Eigenschaften `DbBookSet<Book>`, `BookSet` und die entsprechenden Methoden. |
+| Logic   | Contracts     | `IContext`         | IContextGeneration.cs         | Die Schnittstelle für den öffentlichen Zugriff das `BookSet`. |
+| WebApi  | Models        | `Book`             | Book.cs                       | Das Model-`Book` für die `WebApi`-Übertragung. |
+| WebApi  | Models        | `BookEdit`         | BookEdit.cs                   | Das Model-`BookEdit`für die `WebApi`-Übertragung. |
+| WebApi  | Models        | `Book`             | BookInheritance.cs            | Eine `partial`-Klasse in welche die Ableitung des Models definiert ist. |
+| WebApi  | Controllers   | `BooksController`  | BooksController.cs            | Die standard Implementierung der `CRUD`-Operationen für das Entity `Book` |
+| WebApi  | Controllers   | `ContextAccessor`  | ContextAccessorGeneration.cs  | Die Methode für den Zugriff auf die `BookSet`-Eigenschaft in der Logik. |
+| MVVMApp | Models        | `Book`             | Book.cs                       | Das Model-`Book` für die `WebApi`-Übertragung. |
+| MVVMApp | Models        | `Book`             | BookInheritance.cs            | Eine `partial`-Klasse in welche die Ableitung des Models definiert ist. |
+| MVVMApp | ViewModels    | `BooksViewModel`   | BooksViewModel.cs             | Ein `ViewModel` für die `Book`-Tabellen-Ansicht. |
+| MVVMApp | ViewModels    | `BookViewModel`    | BookViewModel.cs              | Ein `ViewModel` für die `Book`-Einzel-Ansicht. |
+
+> **HINWEIS:** Die **Dateinamen** gelten nur für den Mode *Write generated source into: Single files*.
+
+## Erweiterungen nach der CodeGenerierung
+
+**Erweiterungsrichtlinien:**
+
+- Wenn eine Klasse Members erweitert wird, dann erfolgt dies in einer `partial class Name`.
+- Zusätzlich muss die Code-Generierung geprüft werden und mit der Konstanten `GENERATEDCODE_ON` eingeschaltet werden.
+- Der folgende Programmausschnitt zeigt eine mögliche Erweiterung:
 
 ```csharp
-var login = await Logic.AccountAccess.LogonAsync(email, pwd, string.Empty);
-
-result = Logic.DataContext.Factory.CreateContext(login.SessionToken);
+#if GENERATEDCODE_ON
+namespace SEBookStore.MVVMApp.Models
+{
+    partial class Book
+    {
+        public override string ToString()
+        {
+            return $"{Author} {Title}";
+        }
+    }
+}
+#endif
 ```
+
+### Erweiterung: Datenimport
+
+Für den Datenimport erweitern wir im Modul `SEBookStore.ConApp` die Klasse `Program`. Zu diesem Zweck wird eine partiele Klasse mit dem Dateinamen 'ProgramImport.cs' erstellt. In dieser Klasse erfolgt das Eomnlesen der csv-Daten und die Auswertung des Importes:
+
+```csharp
+#if GENERATEDCODE_ON
+using SEBookStore.Logic.Exceptions;
+
+namespace SEBookStore.ConApp
+{
+    /// <summary>
+    /// This partial class of Program contains the ImportData method, which imports book data from a CSV file into the database.
+    /// </summary>
+    partial class Program
+    {
+        /// <summary>
+        /// Imports book data from a CSV file located in the "Data" directory.
+        /// Each line in the CSV file represents a book with its details separated by semicolons.
+        /// The method reads the file, parses the data, and adds each book to the database.
+        /// </summary>
+        /// <remarks>
+        /// The CSV file is expected to have the following columns in order:
+        /// ISBNNumber, Author, Description, Price, Title, YearOfRelease.
+        /// </remarks>
+        /// <exception cref="BusinessException">Thrown when a business rule is violated while adding a book to the database.</exception>
+        /// <exception cref="Exception">Thrown for any other errors during the import process.</exception>
+        static partial void ImportData()
+        {
+            int index = 0;
+            var filePath = Path.Combine("Data", "book_dataset.csv");
+            var books = File.ReadAllLines(filePath).Skip(1)
+                .Select(line => line.Split(';'))
+                .Select(parts => new Logic.Entities.Book
+                {
+                    ISBNNumber = parts[0],
+                    Author = parts[1],
+                    Description = parts[2],
+                    Price = double.Parse(parts[3]),
+                    Title = parts[4],
+                    YearOfRelease = int.Parse(parts[5])
+                });
+
+            foreach (var book in books)
+            {
+                using var context = CreateContext();
+
+                try
+                {
+                    index++;
+                    context.BookSet.Add(book);
+                    context.SaveChanges();
+                }
+                catch (BusinessException ex)
+                {
+                    Console.WriteLine($"Error on line {index} {book}: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error on line {index}: {ex.InnerException}");
+                }
+            }
+        }
+    }
+}
+#endif
+```
+
+Das Programm `SEBookStore.ConApp` kann nun gestartet werden. Anschließend führen Sie die Auswahl: **InitDatabase...1** durch - der Import startet. In der Konsole werden die Fehler vom Import ausgegeben:
+
+```bash
+SEBookStore
+==========================================
+InitDatabase             ....1
+
+Exit...............x
+
+Your choice: 1
+Error on line 3 Julie Watts - Ashes and Hope: Invalid ISBN number
+Error on line 5 Sa - Paris in Spring: The character length of the author must be at least 3 characters long.
+Error on line 7 Irene Arnold - Star: The character length of the title must be at least 5 characters long.
+Error on line 18 Jorge Dixon - The Dreammaker: The publication must be between 1900 and 2026.
+Error on line 21 Kara Rhodes - Tastes of Tuscany: The publication must be between 1900 and 2026.
+Error on line 25 Moses Knight - The Painter AI: The price must be between EUR 1 and EUR 10,000.
+Error on line 27 Stacey Parks - Melody of Me: The price must be between EUR 1 and EUR 10,000.
+Error on line 31: Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 19: 'UNIQUE constraint failed: Books.ISBNNumber'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+
+Continue with Enter...
+```
+
+### Erweiterung MVVMApp
+
+In der MVVMApp sind im Ordner `ViewModel` die beiden Klassen `BooksViewModel` und `BookViewModel` generiert worden. Das `BooksViewModel` ist für die Listen-Ansicht mit den Operationen `Add`, `Edit` und `Delete` generiert worden. Das `BookViewModel` dient für die Einzelbearbeitung `Add` und `Edit`. Allerdings müssen für die Verwendung noch ein paar Anpassungen durchgeführt werden.
+
+#### Erweiterung MVVMApp-Listen-Ansicht
+
+> **HINWEIS:** Für die Entwicklung von Ansichten wird die Verwendung von `UserControls` empfohlen. Diese unterstützen die Wiederverwendung auf der Ebene von Ansichten.
+
+Erstellung der Listen-Ansicht mit einem `DataGrid`-Control  im Ordner `Views`:
+
+> Fügen Sie mit der IDE ein `Avalonia UserControl` mit dem Namen **BooksUserControl** hinzu.
+
+```xml
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:SEBookStore.MVVMApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:BooksViewModel"
+             x:Class="SEBookStore.MVVMApp.Views.BooksUserControl">
+
+    <UserControl.DataContext>
+        <vm:BooksViewModel></vm:BooksViewModel>
+    </UserControl.DataContext>
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="0" Grid.Row="0" Margin="0 0 0 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <!-- Filter-Textbox nimmt die gesamte verfügbare Breite ein -->
+            <Button Grid.Column="0"    Grid.Row="0"
+                Background="Transparent"
+                Command="{Binding AddItemCommand}">
+                <StackPanel Orientation="Horizontal" Width="20" Height="20">
+                    <Image Source="/Assets/add.png"></Image>
+                </StackPanel>
+            </Button>
+
+            <TextBox Grid.Column="1" Grid.Row="0"
+                Watermark="Geben Sie hier eine Filter ein"
+                Text="{Binding Filter}"
+                HorizontalAlignment="Stretch" />
+
+            <!-- Button mit fester Breite -->
+            <Button    Grid.Column="2"    Grid.Row="0"
+                Background="Transparent"
+                Command="{Binding LoadModelsCommand}">
+                <StackPanel Orientation="Horizontal" Width="20" Height="20">
+                    <Image Stretch="" Source="/Assets/reload.png"></Image>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <DataGrid Grid.Column="0" Grid.Row="1"
+            x:Name="dataGrid"
+            BorderThickness="1"
+            BorderBrush="Gray"
+            IsReadOnly="True"
+            ItemsSource="{Binding Models}"
+            SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+            AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Author" Binding="{Binding Author}" />
+                <DataGridTextColumn Header="Titel" Binding="{Binding Title}" />
+                <DataGridTemplateColumn Width="Auto" Header="Actions">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button
+                                    Background="Transparent"
+                                    Command="{Binding #dataGrid.((vm:BooksViewModel)DataContext).EditItemCommand}"
+                                    CommandParameter="{Binding}">
+                                    <StackPanel Orientation="Horizontal" Width="20" Height="20">
+                                        <Image Stretch="" Source="/Assets/edit.png"></Image>
+                                    </StackPanel>
+                                </Button>
+                                <Button
+                                    Background="Transparent"
+                                    Command="{Binding #dataGrid.((vm:BooksViewModel)DataContext).DeleteItemCommand}"
+                                    CommandParameter="{Binding}">
+                                    <StackPanel Orientation="Horizontal" Width="20" Height="20">
+                                        <Image Stretch="" Source="/Assets/delete.png"></Image>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+
+</UserControl>
+```
+
+> **HINWEIS:** Sie können die Vorlage `ItemsUserControl` aus dem Ordner `Template` kopieren und die `DataGridColumns` anpassen.
+
+Im nächsten Schritt fügen wir das `BooksUserControl` in das `MainWindow` ein. Das `MainWindow` wird wie im folgenden Abschnitt entsprechend angepasst:
+
+```xml
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:SEBookStore.MVVMApp.ViewModels"
+        xmlns:views="using:SEBookStore.MVVMApp.Views"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+        x:Class="SEBookStore.MVVMApp.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="1000"
+        Height="600"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="BookStore">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <TabControl Margin="5">
+        <TabItem Header="Bücher">
+            <views:BooksUserControl />
+        </TabItem>
+    </TabControl>    
+
+</Window>
+```
+
+#### Erweiterung MVVMApp-Einzel-Ansicht
+
+Erstellung der Einzel-Ansicht mit einem `Grid`-Container  im Ordner `Views`:
+
+> Fügen Sie mit der IDE ein `Avalonia UserControl` mit dem Namen **BookUserControl** hinzu.
+
+```xml
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:SEBookStore.MVVMApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="460" d:DesignHeight="320"
+             x:Class="SEBookStore.MVVMApp.Views.BookUserControl"
+              x:DataType="vm:BookViewModel">
+
+    <UserControl.DataContext>
+        <vm:BookViewModel />
+    </UserControl.DataContext>
+
+    <Grid Margin="20 10 20 10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="ISBN:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 10 10 0"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ISBNNumber}" Margin="0 10 10 0"/>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Autor:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 10 10 0"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Author}" Margin="0 10 10 0"/>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Titel:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 10 10 0"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Title}" Margin="0 10 10 0"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Beschreibung:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 10 10 0"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Description}" Margin="0 10 10 0"/>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="Erscheinung:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 10 10 0"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding YearOfRelease}" Margin="0 10 10 0"/>
+
+        <Label Grid.Row="5" Grid.Column="0" Content="Preis:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 10 10 0"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Price}" Margin="0 10 10 0"/>
+
+        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Abbrechen" Command="{Binding CancelCommand}" Width="120" HorizontalContentAlignment="Center" Margin="0 10 10 0"/>
+            <Button Content="Speichern" Command="{Binding SaveCommand}" Width="120" HorizontalContentAlignment="Center" Margin="0 10 10 0"/>
+        </StackPanel>
+    </Grid>
+
+</UserControl>
+```
+
+> **HINWEIS:** Sie können die Vorlage `ItemUserControl` aus dem Ordner `Template` kopieren und die `GridColumns` und `GridRows` entsprechend anpassen.
+
+Das `ItemUserControl` benötigt nun ein `Avalonia Window` damit dieses Element dem Benutzer angezeigt werden kann. 
+
+> Fügen Sie mit der IDE ein `Avalonia Window` mit dem Namen **BookWindow** hinzu.
+
+```xml
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:SEBookStore.MVVMApp.ViewModels"
+        xmlns:views="using:SEBookStore.MVVMApp.Views"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="350"
+        Width="800"
+        Height="350"
+        x:Class="SEBookStore.MVVMApp.Views.BookWindow"
+        x:DataType="vm:BookViewModel"
+        WindowStartupLocation="CenterOwner"
+        Title="Buch">
+
+    <Window.DataContext>
+        <vm:BookViewModel/>
+    </Window.DataContext>
+
+    <views:BookUserControl DataContext="{Binding}">
+    </views:BookUserControl>
+
+</Window>
+```
+
+Im letzten Schritt muss noch das `BooksViewModel` im Ordner `ViewModels` angepasst werden. Dazu muss eine partielle Klasse erstellt werden und die abstrakten Methoden definiert werden. Der Dateiname ist *BooksViewModelEx.cs*.
+
+```csharp
+#if GENERATEDCODE_ON
+using Avalonia.Controls;
+using SEBookStore.MVVMApp.Models;
+
+namespace SEBookStore.MVVMApp.ViewModels
+{
+    partial class BooksViewModel
+    {
+        protected override GenericItemViewModel<Book> CreateViewModel()
+        {
+            return new BookViewModel();
+        }
+
+        protected override Window CreateWindow()
+        {
+            return new Views.BookWindow();
+        }
+    }
+}
+#endif
+```
+
+### Testen der MVVMApp
+
+Damit die Anwendung gestartet werden kann, muss ein MultiStart eingerichtet werden. Für die Ausführung der `MVVMApp` muss zusätzlich die `WebApi` gestartet werden. Die basis-URL ist in der `appsettings.Development.json` konfiguriert. Als `Default`-Wert ist der Wert *https://localhost:7074/api/* eingestellt.
+
+**Viel Spaß**
