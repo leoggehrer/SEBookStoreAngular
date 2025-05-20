@@ -15,7 +15,8 @@ export class BookEditComponent {
   @Output() save = new EventEmitter<IBook>();
   @Output() cancel = new EventEmitter<void>();
 
-  constructor(public activeModal: NgbActiveModal) {
+  constructor(
+    public activeModal: NgbActiveModal) {
     
   }
   public close() {

@@ -6,12 +6,19 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { BookListComponent } from './pages/books/book-list/book-list.component';
 
 const routes: Routes = [
+  // Öffentlicher Login-Bereich
   { path: 'auth/login', component: LoginComponent },
+
+  // Geschützter Bereich mit Dashboard und Unterseiten
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'books', component: BookListComponent, canActivate: [AuthGuard] },
+
+  // Redirect von leerem Pfad auf Dashboard
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+
+  // Fallback bei ungültiger URL
   { path: '**', redirectTo: '/dashboard' }
-]
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

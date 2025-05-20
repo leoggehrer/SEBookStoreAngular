@@ -21,7 +21,7 @@ export class BookListComponent implements OnInit {
       filter: "Title.ToLower().Contains(@0) or Author.ToLower().Contains(@0)",
       values: []
     };
-  public books: IBook[] = [];
+  public items: IBook[] = [];
   public editingBook: any = null;
   public editingIndex: number | null = null;
 
@@ -45,7 +45,6 @@ export class BookListComponent implements OnInit {
     private modal: NgbModal,
     private bookService: BookService,
     private messageBoxService: MessageBoxService) {
-    this._queryParams.values = [];
 
   }
 
@@ -58,7 +57,7 @@ export class BookListComponent implements OnInit {
       this.bookService
         .getAll()
         .subscribe(data => {
-          this.books = this.sortData(data);
+          this.items = this.sortData(data);
         });
     }
     else {
@@ -70,7 +69,7 @@ export class BookListComponent implements OnInit {
     this.bookService
       .query(queryParams)
       .subscribe(data => {
-        this.books = this.sortData(data);
+        this.items = this.sortData(data);
       });
   }
 

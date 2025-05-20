@@ -10,8 +10,13 @@ import { environment } from '@environment/environment';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
+  public cards = [
+    { title: 'Bücherliste', text: 'Eine riesen Auswahl an Büchern', type: '/books', bg: 'bg-primary text-white' },
+    { title: 'Bücherlist 2', text: 'Eine weiter Auswahl an Büchern', type: '/books', bg: 'bg-success text-white' },
+  ];
+
   constructor(
-    private auth: AuthService, 
+    private auth: AuthService,
     private router: Router) {
 
   }

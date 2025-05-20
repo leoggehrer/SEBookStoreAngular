@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <h2 class="mb-4">Bücherliste</h2>
+    <h3 class="mb-4">Bücherliste</h3>
 
     <div class="d-flex mb-3">
         <button class="btn btn-primary me-2" 
@@ -30,19 +30,19 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let book of books">
-                <td><strong>{{ book.author }}</strong></td>
-                <td>{{ book.title }}</td>
-                <td>{{ book.isbnNumber }}</td>
-                <td>{{ book.yearOfRelease }}</td>
-                <td>{{ book.price | currency : 'EUR':'symbol':'1.2-2' }}</td>
+            <tr *ngFor="let item of items">
+                <td><strong>{{ item.author }}</strong></td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.isbnNumber }}</td>
+                <td>{{ item.yearOfRelease }}</td>
+                <td>{{ item.price | currency : 'EUR':'symbol':'1.2-2' }}</td>
                 <td>
                     <button class="btn btn-sm btn-outline-secondary me-2" 
-                        (click)="editItem(book)">
+                        (click)="editItem(item)">
                         <i class="bi bi-pencil"></i>                      
                     </button>
                     <button class="btn btn-sm btn-outline-danger"
-                        (click)="deleteItem(book)">
+                        (click)="deleteItem(item)">
                         <i class="bi bi-trash"></i>                      
                     </button>
                 </td>

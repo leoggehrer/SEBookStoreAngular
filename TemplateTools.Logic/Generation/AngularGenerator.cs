@@ -651,7 +651,7 @@ namespace TemplateTools.Logic.Generation
                 }
                 else
                 {
-                    result.Add($"  {tsPropertyName}: {subType.Name}[];");
+                    result.Add($"  {tsPropertyName}: {ItemProperties.CreateTSModelName(subType)}[];");
                 }
             }
             else if (propertyInfo.PropertyType.IsInterface)
