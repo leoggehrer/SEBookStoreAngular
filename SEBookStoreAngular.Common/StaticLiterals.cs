@@ -211,6 +211,7 @@ namespace SEBookStoreAngular.Common
             $".vs",
             $".vscode",
             $".git",
+            $".github",
             $"bin",
             $"obj",
             $"node_modules",
